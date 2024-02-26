@@ -1,5 +1,7 @@
 import React, { useState, ChangeEvent } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+
 // import BackgroundImage from "../assets/background.png";
 import profileImg from "../assets/profile.png";
 
@@ -12,6 +14,7 @@ const Register = () => {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
@@ -28,12 +31,36 @@ const Register = () => {
     }
 
     setLoading(true);
-    await delay(500);
-    console.log(`Email: ${inputEmail}, Password: ${inputPassword}`);
 
-    if (inputEmail !== "admin" || inputPassword !== "admin") {
+    try {
+      console.log(inputEmail + " " + inputPassword);
+
+      const response = await fetch("http://localhost:3000/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: inputEmail,
+          password: inputPassword,
+        }),
+      });
+      console.log(response);
+
+      if (response.ok) {
+        // Registration successful
+        navigate("/");
+        console.log("Registration successful");
+      } else {
+        // Handle registration failure
+        console.error("Registration failed");
+        setShow(true);
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
       setShow(true);
     }
+
     setLoading(false);
   };
 
