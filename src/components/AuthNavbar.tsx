@@ -4,16 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 interface User {
   displayName: string;
   photos: { value: string }[];
-  // Add other properties if needed
 }
 
-interface NavbarProps {
+interface AuthNavbarProps {
   user?: User | null;
+  handleLogout: () => void;
 }
 
-// ... (your imports)
-
-const Navbar: React.FC<NavbarProps> = ({ user }) => {
+const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
   const [userData, setUserData] = useState<User | null>(user);
   const navigate = useNavigate();
 
@@ -36,32 +34,8 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
     localStorage.removeItem("user");
     localStorage.removeItem("tokens");
     setUserData(null);
+    handleLogout();
     navigate("/");
-  };
-
-  const renderLoggedInLinks = () => (
-    <>
-      <span className="user-details">{userData?.displayName}</span>
-      <Link className="link" to="/" onClick={logout}>
-        Logout
-      </Link>
-    </>
-  );
-
-  const renderLoggedOutLink = () => (
-    <Link className="link" to="/" onClick={handleLoginClick}>
-      Login
-    </Link>
-  );
-
-  const handleLoginClick = () => {
-    const tokens = localStorage.getItem("tokens");
-    const storedUser = localStorage.getItem("user");
-
-    if (tokens && storedUser) {
-      // If both tokens and user data exist, the user is logged in, navigate to /home
-      navigate("/home");
-    }
   };
 
   return (
@@ -71,9 +45,11 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
           AD Social
         </Link>
       </span>
-      {userData ? renderLoggedInLinks() : renderLoggedOutLink()}
+      <Link className="link" to="/" onClick={logout}>
+        Logout
+      </Link>
     </div>
   );
 };
 
-export default Navbar;
+export default AuthNavbar;
