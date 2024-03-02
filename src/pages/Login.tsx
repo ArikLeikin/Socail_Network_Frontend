@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
-
 import BackgroundImage from "../assets/background.png";
 import Logo from "../assets/logo.png";
 import Google from "../assets/google.png";
 import Facebook from "../assets/facebook.png";
 import Github from "../assets/github.png";
 
-const Login = () => {
+const Login = ({ handleLogin }) => {
   const google = () => {
     window.open("http://localhost:5000/auth/google", "_self");
   };
@@ -23,8 +22,12 @@ const Login = () => {
 
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem("tokens")
+  );
 
   const navigate = useNavigate();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -35,32 +38,61 @@ const Login = () => {
     };
 
     try {
+      // Step 1: Login
       const response = await fetch("http://localhost:3000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: inputEmail,
-          password: inputPassword,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
-      // Check if the login was successful based on the response status
       if (response.ok) {
-        console.log("Login successful!");
-        navigate("/home");
+        const loginData = await response.json();
+
+        // Step 2: Get User Info
+        const userDataResponse = await fetch(
+          "http://localhost:3000/auth/getUserInfo",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${loginData.accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (userDataResponse.ok) {
+          const userData = await userDataResponse.json();
+
+          localStorage.setItem("tokens", JSON.stringify(loginData));
+          localStorage.setItem("user", JSON.stringify(userData));
+
+          console.log("Login successful!");
+          handleLogin();
+          navigate("/home");
+        } else {
+          console.log("Failed to get user information");
+          setShow(true);
+        }
       } else {
         console.log("Login failed!");
         setShow(true);
       }
     } catch (error) {
       console.error("Error during login:", error);
-      // Handle error, show an error message, etc.
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("tokens");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    // Redirect or perform any other actions after logout
+  };
+
   const handlePassword = () => {};
 
   function delay(ms: number | undefined) {
@@ -70,12 +102,12 @@ const Login = () => {
   return (
     <div className="login">
       <div className="myWrapper">
-        <h1 className="loginTitle mt-5">Login to AD Social</h1>
         <div className="center">
           <div className="line" />
           {/* <div className="or">OR</div> */}
         </div>
         <div className="details">
+          <h1>Login to AD Social</h1>
           <input
             type="text"
             placeholder="Email"
