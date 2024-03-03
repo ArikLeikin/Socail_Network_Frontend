@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar";
 import AuthNavbar from "./components/AuthNavbar";
 import NotFound from "./components/NotFound";
 import Home from "./pages/Home";
+import { Navigate } from "react-router-dom";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,19 +23,53 @@ function App() {
   };
 
   useEffect(() => {
-    // Check if there is an access token in local storage
-    const accessToken = localStorage.getItem("accessToken");
-    setIsLoggedIn(!!accessToken); // Set isLoggedIn to true if accessToken exists
+    const validateAccessToken = async () => {
+      try {
+        const tokens = localStorage.getItem("tokens");
+        if (tokens) {
+          // Make a request to the server to validate the access token
+          // Replace the following line with your actual API endpoint for token validation
+          const response = await fetch("/auth/getUserInfo", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tokens}`,
+            },
+          });
+
+          if (response.ok) {
+            setIsLoggedIn(true);
+          } else {
+            setIsLoggedIn(false);
+          }
+        } else {
+          setIsLoggedIn(false);
+        }
+      } catch (error) {
+        console.error("Error validating access token:", error);
+        setIsLoggedIn(false);
+      }
+    };
+
+    validateAccessToken();
   }, []);
 
   return (
     <Router>
       {isLoggedIn ? <AuthNavbar handleLogout={handleLogout} /> : <Navbar />}
       <Routes>
-        <Route path="/" element={<Login handleLogin={handleLogin} />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/home" element={<Home />} />
+        {isLoggedIn ? (
+          <>
+            <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
+          </>
+        ) : (
+          <>
+            <Route path="/" element={<Login handleLogin={handleLogin} />} />
+            <Route path="/register" element={<Register />} />
+          </>
+        )}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
