@@ -1,9 +1,10 @@
 import React, { useState, ChangeEvent } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
-// import BackgroundImage from "../assets/background.png";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import profileImg from "../assets/profile.png";
+import axios from "axios";
 
 const Register = () => {
   const [inputEmail, setInputEmail] = useState("");
@@ -33,26 +34,47 @@ const Register = () => {
     setLoading(true);
 
     try {
-      console.log(inputEmail + " " + inputPassword);
+      const requestBody = {
+        email: inputEmail,
+        password: inputPassword,
+      };
 
       const response = await fetch("http://localhost:3000/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: inputEmail,
-          password: inputPassword,
-        }),
+        body: JSON.stringify(requestBody),
       });
-      console.log(response);
+
+      const responseData = await response.json();
 
       if (response.ok) {
         // Registration successful
+        const pictureFormData = new FormData();
+        pictureFormData.append("file", selectedImage);
+
+        const userId = responseData._id;
+
+        const response = await fetch(
+          `http://localhost:3000/user/picture/${userId}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${responseData.accessToken}`,
+            },
+            body: pictureFormData,
+          }
+        );
         navigate("/");
         console.log("Registration successful");
       } else {
         // Handle registration failure
+        if (response.status === 409) {
+          toast.error("Email already in use");
+        } else {
+          toast.error("Registration failed!");
+        }
         console.error("Registration failed");
         setShow(true);
       }
@@ -72,6 +94,7 @@ const Register = () => {
     if (event.target.files && event.target.files.length > 0) {
       const selectedFile = event.target.files[0];
       setSelectedImage(selectedFile);
+      console.log(selectedFile);
 
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -99,11 +122,12 @@ const Register = () => {
   return (
     <div className="login">
       <div className="myWrapper">
-        <h1 className="loginTitle mt-5">Register to AD Social</h1>
         <div className="center">
           <div className="line" />
         </div>
+
         <div className="details">
+          <h1>Register to AD Social</h1>
           <input
             type="text"
             placeholder="Email"
@@ -155,6 +179,7 @@ const Register = () => {
           <button className="loginButton adLogin" onClick={handleSubmit}>
             Submit
           </button>
+          <ToastContainer />
         </div>
       </div>
     </div>

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Alert } from "react-bootstrap";
 import "./login.css";
 import BackgroundImage from "../assets/background.png";
 import Post from "../components/post/Post";
-import AddPost from "../components/addPost/AddPost"; // Import the new component
+import AddPost from "../components/addPost/AddPost";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface PostData {
   id: number;
@@ -12,27 +14,41 @@ interface PostData {
 }
 
 const Home: React.FC = () => {
-  const [posts, setPosts] = useState<PostData[]>([
-    { id: 1, title: "Post 1", body: "This is the content of Post 1." },
-    { id: 2, title: "Post 2", body: "This is the content of Post 2." },
-    { id: 3, title: "Post 3", body: "This is the content of Post 3." },
-    // Add more posts as needed
-  ]);
-
-  const [show, setShow] = useState(false);
+  const [posts, setPosts] = useState<PostData[]>([]);
+  const [showError, setShowError] = useState(false);
 
   const handleAddPost = (newPost: PostData) => {
     setPosts([...posts, newPost]);
   };
 
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/posts/allPosts", {
+          method: "GET",
+        });
+
+        if (response.ok) {
+          console.log(response.body);
+
+          console.log("Succesful");
+        } else {
+          toast.error("Error fetching posts!");
+        }
+
+        const data: PostData[] = await response.json();
+        setPosts(data);
+      } catch (error) {
+        setShowError(true);
+      }
+    };
+
+    fetchPosts();
+  }, []); // Empty dependency array ensures the effect runs only once on mount
+
   return (
     <div className="d-flex flex-column align-items-center">
-      <AddPost onAddPost={handleAddPost} /> {/* Add the new post component */}
-      {show && (
-        <Alert variant="danger">
-          Error fetching posts. Please try again later.
-        </Alert>
-      )}
+      <AddPost onAddPost={handleAddPost} />
       {posts.map((post) => (
         <div className="myWrapper mt-5" key={post.id}>
           <div className="center"></div>
@@ -42,6 +58,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       ))}
+      <ToastContainer />
     </div>
   );
 };

@@ -11,8 +11,17 @@ import NotFound from "./components/NotFound";
 import Home from "./pages/Home";
 import { Navigate } from "react-router-dom";
 
+interface User {
+  _id: string;
+  accessToken: string;
+  refreshToken: string;
+  email: string;
+  profileImage: string; // Add profileImage field
+}
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [profile, setProfile] = useState<User | null>(null);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -22,18 +31,25 @@ function App() {
     setIsLoggedIn(false);
   };
 
+  const handleProfileChange = (newProfileData: User) => {
+    setProfile(newProfileData);
+    setIsLoggedIn(!!newProfileData); // Update isLoggedIn based on profile data
+  };
+
   useEffect(() => {
     const validateAccessToken = async () => {
       try {
-        const tokens = localStorage.getItem("tokens");
-        if (tokens) {
+        const user: User | null = JSON.parse(
+          localStorage.getItem("user") || "null"
+        );
+        if (user) {
           // Make a request to the server to validate the access token
           // Replace the following line with your actual API endpoint for token validation
-          const response = await fetch("/auth/getUserInfo", {
+          const response = await fetch(`/user/${user._id}`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${tokens}`,
+              Authorization: `Bearer ${user.accessToken}`,
             },
           });
 
@@ -56,7 +72,11 @@ function App() {
 
   return (
     <Router>
-      {isLoggedIn ? <AuthNavbar handleLogout={handleLogout} /> : <Navbar />}
+      {isLoggedIn ? (
+        <AuthNavbar profile={profile} handleLogout={handleLogout} />
+      ) : (
+        <Navbar />
+      )}
       <Routes>
         {isLoggedIn ? (
           <>
