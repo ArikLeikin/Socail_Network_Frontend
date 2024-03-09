@@ -3,19 +3,20 @@ import { Form, Button, Alert } from "react-bootstrap";
 // import BackgroundImage from "../assets/background.png";
 import profileImg from "../assets/profile.png";
 
-const Register = () => {
-  const initialUser = {
-    email: "testuser@example.com",
-    password: "testpassword",
-    profileImage: profileImg,
-  };
+interface UserData {
+  _id: string;
+  accessToken: string;
+  refreshToken: string;
+  email: string;
+}
 
-  const [inputEmail, setInputEmail] = useState(initialUser.email);
-  const [inputPassword, setInputPassword] = useState(initialUser.password);
+const Register = () => {
+  const user: UserData = JSON.parse(localStorage.getItem("user"));
+
+  const [inputEmail, setInputEmail] = useState(user.email);
+  const [inputPassword, setInputPassword] = useState("12345678");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(
-    initialUser.profileImage
-  );
+  const [imagePreview, setImagePreview] = useState<string | null>();
   const [isEditing, setIsEditing] = useState(false);
 
   const [show, setShow] = useState(false);
@@ -41,14 +42,29 @@ const Register = () => {
     }
 
     setLoading(true);
-    await delay(500);
     console.log(`Email: ${inputEmail}, Password: ${inputPassword}`);
 
+    const pictureFormData = new FormData();
+    pictureFormData.append("file", selectedImage);
+    const user: UserData = JSON.parse(localStorage.getItem("user"));
+    const userId = user._id;
+
+    const response = await fetch(
+      `http://localhost:3000/user/picture/${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+        body: pictureFormData,
+      }
+    );
     if (inputEmail !== "admin" || inputPassword !== "admin") {
       setShow(true);
       setIsEditing(false); // Exit editing mode after successful submission
     }
     setLoading(false);
+    window.location.reload();
   };
 
   const handlePassword = () => {
@@ -86,11 +102,11 @@ const Register = () => {
   return (
     <div className="login">
       <div className="myWrapper">
-        <h1 className="loginTitle mt-5">Profile</h1>
         <div className="center">
           <div className="line" />
         </div>
         <div className="details">
+          <h1>Profile</h1>
           <input
             type="text"
             placeholder="Email"
@@ -98,10 +114,10 @@ const Register = () => {
             style={{ borderRadius: "10px" }}
             value={inputEmail}
             onChange={(e) => setInputEmail(e.target.value)}
-            readOnly={!isEditing}
+            readOnly={true}
           />
           <input
-            type="password"
+            type={isEditing ? "text" : "password"}
             placeholder="Password"
             className="custom-input mb-3"
             value={inputPassword}

@@ -7,6 +7,7 @@ import Logo from "../assets/logo.png";
 import Google from "../assets/google.png";
 import Facebook from "../assets/facebook.png";
 import Github from "../assets/github.png";
+import { ToastContainer, toast } from "react-toastify";
 
 const Login = ({ handleLogin }) => {
   const google = () => {
@@ -22,9 +23,7 @@ const Login = ({ handleLogin }) => {
 
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem("tokens")
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("user"));
 
   const navigate = useNavigate();
 
@@ -50,33 +49,13 @@ const Login = ({ handleLogin }) => {
       if (response.ok) {
         const loginData = await response.json();
 
-        // Step 2: Get User Info
-        const userDataResponse = await fetch(
-          "http://localhost:3000/auth/getUserInfo",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${loginData.accessToken}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        localStorage.setItem("user", JSON.stringify(loginData));
 
-        if (userDataResponse.ok) {
-          const userData = await userDataResponse.json();
-
-          localStorage.setItem("tokens", JSON.stringify(loginData));
-          localStorage.setItem("user", JSON.stringify(userData));
-
-          console.log("Login successful!");
-          handleLogin();
-          navigate("/home");
-        } else {
-          console.log("Failed to get user information");
-          setShow(true);
-        }
+        console.log("Login successful!");
+        handleLogin();
+        navigate("/home");
       } else {
-        console.log("Login failed!");
+        console.log("Failed to get user information");
         setShow(true);
       }
     } catch (error) {
@@ -142,6 +121,7 @@ const Login = ({ handleLogin }) => {
           </div>
         </div>
       </div>
+      <ToastContainer></ToastContainer>
     </div>
   );
 };
