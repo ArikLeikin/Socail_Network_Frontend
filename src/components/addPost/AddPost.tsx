@@ -5,16 +5,10 @@ import "./addPost.css";
 import profileImg from "../../assets/profile.png"; // Replace with the correct path
 
 interface AddPostProps {
-  onAddPost: (newPost: {
-    id: number;
-    title: string;
-    body: string;
-    image?: File;
-  }) => void;
+  onAddPost: (newPost: { id: number; body: string; image?: File }) => void;
 }
 
 const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
-  const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -41,31 +35,30 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
     e.preventDefault();
 
     try {
+      console.log(body);
+
       // Check if required fields are filled
-      if (!title || !body) {
-        alert("Title and Body are required fields");
+      if (!body) {
+        alert("Body is required");
         return;
       }
 
-      // Create a JSON object representing the post data
-      const postData = {
-        title,
-        body,
-      };
-
-      // If an image is selected, add it to the JSON object
+      // Create a FormData object
+      const formData = new FormData();
+      formData.append("body", body);
       if (image) {
-        postData["file"] = image;
+        formData.append("image", imagePreview);
       }
+      const accessToken = JSON.parse(localStorage.getItem("user")).accessToken;
+      console.log(accessToken);
 
       // Make a POST request to your backend endpoint
       const response = await fetch("http://localhost:3000/posts/addPost", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          // Add any necessary headers, such as authorization
+          Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify(postData),
+        body: formData,
       });
 
       if (response.ok) {
@@ -74,7 +67,6 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
         onAddPost(newPost);
 
         // Clear form fields and image preview
-        setTitle("");
         setBody("");
         setImage(null);
         setImagePreview(null);
@@ -82,6 +74,8 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
 
         alert("Post created successfully!");
       } else {
+        console.log(response);
+
         alert("Error creating post");
       }
     } catch (error) {
