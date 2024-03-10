@@ -47,11 +47,12 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
       const formData = new FormData();
       formData.append("body", body);
       if (image) {
-        formData.append("image", imagePreview);
+        formData.append("file", image);
       }
       const accessToken = JSON.parse(localStorage.getItem("user")).accessToken;
       console.log(accessToken);
-
+      const userId = JSON.parse(localStorage.getItem("user"))._id
+      formData.append("user", userId)
       // Make a POST request to your backend endpoint
       const response = await fetch("http://localhost:3000/posts/addPost", {
         method: "POST",

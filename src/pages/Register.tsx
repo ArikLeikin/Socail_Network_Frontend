@@ -51,8 +51,10 @@ const Register = () => {
       if (response.ok) {
         // Registration successful
         const pictureFormData = new FormData();
-        pictureFormData.append("file", imagePreview);
-
+        pictureFormData.append("file", selectedImage);
+        console.log(responseData);
+        console.log(pictureFormData);
+        
         const userId = responseData._id;
 
         const response = await fetch(
