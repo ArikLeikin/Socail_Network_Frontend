@@ -1,78 +1,100 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./post.css";
 import profileImg from "../../assets/profile.png";
 import bg from "../../assets/background.png";
 import likeIcon from "../../assets/like-icon.png";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const Post = () => {
+interface PostData {
+  id: number;
+  title: string;
+  user: string;
+  body: string;
+  picture: string;
+  createdAt: Date;
+  likes: string[];
+  comments: string[];
+}
+
+interface UserData {
+  email: string;
+}
+
+const Post = ({ post }) => {
+  let userEmail = null;
+  const user = JSON.parse(localStorage.getItem("user"));
   const [showComments, setShowComments] = useState(false);
+  const [users, setUsers] = useState<{ [key: string]: UserData }>({});
 
   const toggleComments = () => {
     setShowComments(!showComments);
   };
 
+  const getFormattedDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const options = { hour: "numeric", minute: "numeric", hour12: false };
+    const formattedDate = date.toLocaleDateString(undefined, options);
+    return formattedDate;
+  };
+
+  const fetchUserForPost = async (postId: number, userId: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/user/${userId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+      });
+      console.log("111111111");
+      console.log(response);
+      if (response.ok) {
+        const userData: UserData = await response.json();
+        setUsers((prevUsers) => ({ ...prevUsers, [userId]: userData }));
+      } else {
+        toast.error("Error fetching user data!");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserForPost(post.id, post.user);
+  }, [post.id, post.user]);
+
   return (
     <div
-      className="p-3 myWrapper postContainer"
-      style={{ alignItems: "flex-start" }}
+      className="myWrapper mt-5"
+      key={post.id}
+      style={{ overflowWrap: "break-word" }}
     >
-      <div className="d-flex flex-row userDetails">
-        <img
-          src={profileImg}
-          alt="Profile"
-          style={{ maxHeight: "50px", maxWidth: "50px" }}
-        />
-        <h6 className="p-3">John Doe</h6>
-      </div>
-      <hr className="myHr" />
-      <div className="mt-1 postBody">
-        <p>
-          This is a text body test for the post component lets see how it looks
-          like all together when styling it
-        </p>
-        <img src={bg} alt="" style={{ maxWidth: "100%" }} />
-      </div>
-      <hr />
-      <div className="d-flex flex-row mt-2 mb-2 justify-content-between counts">
-        <div className="d-flex flex-row likes">
-          <span className="mx-1 likesCounter">
-            <div className="d-flex align-items-center">
-              <img
-                className="likeButton"
-                src={likeIcon}
-                alt=""
-                style={{ maxHeight: "25px", maxWidth: "25px" }}
-              />
-              <span className="ml-1">10</span>
-            </div>
-          </span>
+      <div className="center"></div>
+      <div className="post-wrapper d-flex flex-column align-items-center">
+        <div className="d-flex flex-column align-items-center mt-2">
+          <h6>{users[post.user]?.email}</h6>
+          <h6>{getFormattedDateTime(post.createdAt)}</h6>
         </div>
-        <div className="comments">
-          <span className="mx-1 commentCounter">20</span>
-          <a className="navbar-brand" href="#" onClick={toggleComments}>
-            {showComments ? "Comments" : "Comments"}
-          </a>
-        </div>
+        <hr />
+        <p className="mt-2">{post.body}</p>
+        {post.picture && (
+          <img
+            src={"http://localhost:3000/public/" + post.picture}
+            alt=""
+            className="mb-2"
+            style={{ maxWidth: "100%", height: "600px" }}
+          />
+        )}
       </div>
       <hr />
-
-      {showComments && (
-        <div className="d-flex flex-column mt-3 comments">
-          <div className="d-flex flex-row userDetails">
-            <img
-              src={profileImg}
-              alt="Profile"
-              style={{ maxHeight: "30px", maxWidth: "30px" }}
-            />
-            <span className="p-1">John Doe</span>
-          </div>
-          <div className="commentContent mt-1">
-            Comment 1 CommentCommentvvComment Comment Comment vComment vComment
-            Comment Comment Comment Comment
-          </div>
-        </div>
-      )}
+      <div
+        className="d-flex mt-1 mb-1 justify-content-evenly"
+        style={{ width: "100%" }}
+      >
+        <span>Likes: {post.likes.length}</span>
+        <span>Comments: {post.comments.length}</span>
+      </div>
     </div>
   );
 };

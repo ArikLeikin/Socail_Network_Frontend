@@ -14,6 +14,8 @@ interface PostData {
   body: string;
   picture: string;
   createdAt: Date;
+  likes: string[];
+  comments: string[];
 }
 
 interface UserData {
@@ -92,29 +94,8 @@ const Home: React.FC = () => {
       {posts
         .slice()
         .reverse()
-        .map((post) => (
-          <div
-            className="myWrapper mt-5"
-            key={post.id}
-            style={{ overflowWrap: "break-word" }}
-          >
-            <div className="center"></div>
-            <div className="post-wrapper d-flex flex-column align-items-center">
-              <div className="d-flex flex-column align-items-center mt-2">
-                <h6>{users[post.user]?.email}</h6>
-                <h6>{getFormattedDateTime(post.createdAt)}</h6>
-              </div>
-              <hr />
-              <p className="mt-2">{post.body}</p>
-              {post.picture && (
-                <img
-                  src={"http://localhost:3000/public/" + post.picture}
-                  alt=""
-                  style={{ maxWidth: "100%", height: "600px" }}
-                />
-              )}
-            </div>
-          </div>
+        .map((post, index) => (
+          <Post post={post} key={index} />
         ))}
     </div>
   );
