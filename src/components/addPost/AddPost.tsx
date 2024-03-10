@@ -47,6 +47,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
       // Create a FormData object
       const formData = new FormData();
       formData.append("body", body);
+     
       if (image) {
         formData.append("file", image);
       }

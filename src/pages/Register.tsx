@@ -7,7 +7,7 @@ import profileImg from "../assets/profile.png";
 
 const Register = () => {
   const [inputEmail, setInputEmail] = useState("");
-  const [inputPassword, setInputPassword] = useState("");
+   const [inputPassword, setInputPassword] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(profileImg);
 
@@ -86,7 +86,7 @@ const Register = () => {
 
     setLoading(false);
   };
-
+  
   const handlePassword = () => {
     // Handle password logic if needed
   };
