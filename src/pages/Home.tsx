@@ -18,29 +18,8 @@ const Home: React.FC = () => {
   const [showError, setShowError] = useState(false);
 
   const handleAddPost = async (newPost: PostData) => {
-    try {
-      const formData = new FormData();
-      formData.append("title", newPost.title);
-      formData.append("body", newPost.body);
+    console.log("Click Post");
 
-      const response = await fetch("http://localhost:3000/posts/addPost", {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        body: formData,
-      });
-
-      if (response.ok) {
-        toast.success("Post added successfully!");
-        const data: PostData = await response.json();
-        setPosts([...posts, data]);
-      } else {
-        toast.error("Error adding post!");
-      }
-    } catch (error) {
-      toast.error("Error adding post!");
-    }
     setPosts([...posts, newPost]);
   };
 
@@ -81,7 +60,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       ))}
-      <ToastContainer />
     </div>
   );
 };
