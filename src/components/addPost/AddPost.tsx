@@ -3,6 +3,7 @@ import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
 import { Image as ImageIcon } from "react-bootstrap-icons";
 import "./addPost.css";
 import profileImg from "../../assets/profile.png"; // Replace with the correct path
+import { ToastContainer, toast } from "react-toastify";
 
 interface AddPostProps {
   onAddPost: (newPost: { id: number; body: string; image?: File }) => void;
@@ -39,7 +40,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
 
       // Check if required fields are filled
       if (!body) {
-        alert("Body is required");
+        toast.error("Body is required");
         return;
       }
 
@@ -51,8 +52,8 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
       }
       const accessToken = JSON.parse(localStorage.getItem("user")).accessToken;
       console.log(accessToken);
-      const userId = JSON.parse(localStorage.getItem("user"))._id
-      formData.append("user", userId)
+      const userId = JSON.parse(localStorage.getItem("user"))._id;
+      formData.append("user", userId);
       // Make a POST request to your backend endpoint
       const response = await fetch("http://localhost:3000/posts/addPost", {
         method: "POST",
@@ -73,11 +74,11 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
         setImagePreview(null);
         setInputKey((prevKey) => prevKey + 1);
 
-        alert("Post created successfully!");
+        toast.success("Post created successfully!");
       } else {
         console.log(response);
 
-        alert("Error creating post");
+        toast.error("Error creating post");
       }
     } catch (error) {
       console.error("Error creating post:", error);
@@ -146,6 +147,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
       <Button className="mt-2 mb-2" variant="primary" type="submit">
         Post
       </Button>
+      <ToastContainer />
     </Form>
   );
 };

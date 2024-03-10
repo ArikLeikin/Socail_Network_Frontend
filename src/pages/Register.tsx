@@ -54,7 +54,7 @@ const Register = () => {
         pictureFormData.append("file", selectedImage);
         console.log(responseData);
         console.log(pictureFormData);
-        
+
         const userId = responseData._id;
 
         const response = await fetch(
