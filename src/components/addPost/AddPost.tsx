@@ -51,7 +51,6 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
         formData.append("file", image);
       }
       const accessToken = JSON.parse(localStorage.getItem("user")).accessToken;
-      console.log(accessToken);
       const userId = JSON.parse(localStorage.getItem("user"))._id;
       formData.append("user", userId);
       // Make a POST request to your backend endpoint
@@ -73,6 +72,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
         setImage(null);
         setImagePreview(null);
         setInputKey((prevKey) => prevKey + 1);
+        console.log(response);
 
         toast.success("Post created successfully!");
       } else {
