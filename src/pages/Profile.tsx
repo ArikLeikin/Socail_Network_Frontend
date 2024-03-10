@@ -1,7 +1,4 @@
 import React, { useState, ChangeEvent } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
-// import BackgroundImage from "../assets/background.png";
-import profileImg from "../assets/profile.png";
 
 interface UserData {
   _id: string;
@@ -10,14 +7,16 @@ interface UserData {
   email: string;
 }
 
-const Register = () => {
+const Profile = () => {
+  
   const user: UserData = JSON.parse(localStorage.getItem("user"));
-
+  console.log("user",user);
+  
   const [inputEmail, setInputEmail] = useState(user.email);
-  const [inputPassword, setInputPassword] = useState("12345678");
+  const [inputPassword, setInputPassword] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState(
-    "http://localhost:3000/public/${profileImageName}"
+   ` http://localhost:3000/public/${selectedImage}`
   );
   const [isEditing, setIsEditing] = useState(false);
   const [show, setShow] = useState(false);
@@ -28,18 +27,52 @@ const Register = () => {
   ).profileImage;
 
   const handleEdit = () => {
+    console.log("Edit");
     setIsEditing(true);
   };
-
+  console.log("profileImageName",profileImageName);
+  console.log("selectedImage",selectedImage);
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
+    console.log("Submit");
+    
 
     // Validate email and password (omitted for brevity)
 
     setLoading(true);
 
-    // Logic for handling image upload (omitted for brevity)
 
+    // Logic for handling image upload (omitted for brevity)
+    const formData = new FormData();
+    console.log("selectedImage",selectedImage);
+    
+    if (selectedImage) {
+      formData.append("file", selectedImage);
+    }
+    const response = await fetch(`http://localhost:3000/user/picture/${user._id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+      body: formData,
+    });
+    console.log("-----------response---------",response);
+    
+    if(!response.ok){
+      setShow(true);
+      setLoading(false);
+      return;
+    }
+    const data = await response.json();
+    setImagePreview(`http://localhost:3000/public/${data.profileImage}`);
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        ...user,
+        email: inputEmail,
+        profileImage: data.profileImage,
+      })
+    );
     setLoading(false);
     setIsEditing(false); // Exit editing mode after successful submission
     window.location.reload();
@@ -141,4 +174,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Profile;
