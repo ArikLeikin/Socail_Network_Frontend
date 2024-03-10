@@ -36,7 +36,11 @@ const Post = ({ post }) => {
 
   const getFormattedDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    const options = { hour: "numeric", minute: "numeric", hour12: false };
+    const options: Intl.DateTimeFormatOptions = {
+      hour: "numeric", // or "2-digit"
+      minute: "numeric", // or "2-digit"
+      hour12: false,
+    };
     const formattedDate = date.toLocaleDateString(undefined, options);
     return formattedDate;
   };

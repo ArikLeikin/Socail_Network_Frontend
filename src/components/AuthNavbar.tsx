@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import profileImg from "../assets/profile.png";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const URL = "http://localhost:3000";
 
@@ -59,8 +60,14 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
   return (
     <div className="myNavbar">
       <span className="logo">
-        <Link className="link" to="/">
+        <Link className="link mx-2" to="/">
           AD Social
+        </Link>
+        <Link
+          className="link-underline link-underline-opacity-0 link-opacity-75"
+          to="/news"
+        >
+          News
         </Link>
       </span>
 
