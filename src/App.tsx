@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar";
 import AuthNavbar from "./components/AuthNavbar";
 import NotFound from "./components/NotFound";
 import Home from "./pages/Home";
+import News from "./pages/News";
 import { Navigate } from "react-router-dom";
 
 interface User {
@@ -83,6 +84,7 @@ function App() {
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/home" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/news" element={<News />} />
           </>
         ) : (
           <>

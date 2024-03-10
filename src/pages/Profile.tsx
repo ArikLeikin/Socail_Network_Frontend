@@ -8,15 +8,14 @@ interface UserData {
 }
 
 const Profile = () => {
-  
   const user: UserData = JSON.parse(localStorage.getItem("user"));
-  console.log("user",user);
-  
+  console.log("user", user);
+
   const [inputEmail, setInputEmail] = useState(user.email);
   const [inputPassword, setInputPassword] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState(
-   ` http://localhost:3000/public/${selectedImage}`
+    ` http://localhost:3000/public/${selectedImage}`
   );
   const [isEditing, setIsEditing] = useState(false);
   const [show, setShow] = useState(false);
@@ -30,35 +29,36 @@ const Profile = () => {
     console.log("Edit");
     setIsEditing(true);
   };
-  console.log("profileImageName",profileImageName);
-  console.log("selectedImage",selectedImage);
+  console.log("profileImageName", profileImageName);
+  console.log("selectedImage", selectedImage);
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     console.log("Submit");
-    
 
     // Validate email and password (omitted for brevity)
 
     setLoading(true);
 
-
     // Logic for handling image upload (omitted for brevity)
     const formData = new FormData();
-    console.log("selectedImage",selectedImage);
-    
+    console.log("selectedImage", selectedImage);
+
     if (selectedImage) {
       formData.append("file", selectedImage);
     }
-    const response = await fetch(`http://localhost:3000/user/picture/${user._id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${user.accessToken}`,
-      },
-      body: formData,
-    });
-    console.log("-----------response---------",response);
-    
-    if(!response.ok){
+    const response = await fetch(
+      `http://localhost:3000/user/picture/${user._id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+        },
+        body: formData,
+      }
+    );
+    console.log("-----------response---------", response);
+
+    if (!response.ok) {
       setShow(true);
       setLoading(false);
       return;
