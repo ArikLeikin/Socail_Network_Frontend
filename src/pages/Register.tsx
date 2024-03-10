@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import profileImg from "../assets/profile.png";
-import axios from "axios";
 
 const Register = () => {
   const [inputEmail, setInputEmail] = useState("");
@@ -52,7 +51,7 @@ const Register = () => {
       if (response.ok) {
         // Registration successful
         const pictureFormData = new FormData();
-        pictureFormData.append("file", selectedImage);
+        pictureFormData.append("file", imagePreview);
 
         const userId = responseData._id;
 
@@ -94,7 +93,6 @@ const Register = () => {
     if (event.target.files && event.target.files.length > 0) {
       const selectedFile = event.target.files[0];
       setSelectedImage(selectedFile);
-      console.log(selectedFile);
 
       const reader = new FileReader();
       reader.onload = (e) => {
