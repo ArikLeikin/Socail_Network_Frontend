@@ -6,6 +6,8 @@ import bg from "../../assets/background.png";
 import likeIcon from "../../assets/like-icon.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Likes from "../likes/Likes";
+import Comments from "../comments/Comment";
 
 interface PostData {
   id: number;
@@ -92,8 +94,8 @@ const Post = ({ post }) => {
         className="d-flex mt-1 mb-1 justify-content-evenly"
         style={{ width: "100%" }}
       >
-        <span>Likes: {post.likes.length}</span>
-        <span>Comments: {post.comments.length}</span>
+        <Likes post={post} />
+        <Comments post={post} />
       </div>
     </div>
   );
