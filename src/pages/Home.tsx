@@ -18,29 +18,8 @@ const Home: React.FC = () => {
   const [showError, setShowError] = useState(false);
 
   const handleAddPost = async (newPost: PostData) => {
-    try {
-      const formData = new FormData();
-      formData.append("title", newPost.title);
-      formData.append("body", newPost.body);
+    console.log("Post clicked");
 
-      const response = await fetch("http://localhost:3000/posts/addPost", {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        body: formData,
-      });
-
-      if (response.ok) {
-        toast.success("Post added successfully!");
-        const data: PostData = await response.json();
-        setPosts([...posts, data]);
-      } else {
-        toast.error("Error adding post!");
-      }
-    } catch (error) {
-      toast.error("Error adding post!");
-    }
     setPosts([...posts, newPost]);
   };
 
@@ -72,15 +51,18 @@ const Home: React.FC = () => {
   return (
     <div className="d-flex flex-column align-items-center">
       <AddPost onAddPost={handleAddPost} />
-      {posts.map((post) => (
-        <div className="myWrapper mt-5" key={post.id}>
-          <div className="center"></div>
-          <div className="post-wrapper">
-            <h3>{post.title}</h3>
-            <p>{post.body}</p>
+      {posts
+        .slice()
+        .reverse()
+        .map((post, index) => (
+          <div className="myWrapper mt-5" key={index}>
+            <div className="center"></div>
+            <div className="post-wrapper">
+              <h3>{post.title}</h3>
+              <p>{post.body}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
       <ToastContainer />
     </div>
   );

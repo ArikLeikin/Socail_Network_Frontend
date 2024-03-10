@@ -3,6 +3,7 @@ import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
 import { Image as ImageIcon } from "react-bootstrap-icons";
 import "./addPost.css";
 import profileImg from "../../assets/profile.png"; // Replace with the correct path
+import { ToastContainer, toast } from "react-toastify";
 
 interface AddPostProps {
   onAddPost: (newPost: { id: number; body: string; image?: File }) => void;
@@ -46,6 +47,8 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
       // Create a FormData object
       const formData = new FormData();
       formData.append("body", body);
+      const userId = JSON.parse(localStorage.getItem("user")).id;
+      formData.append("user", userId);
       if (image) {
         formData.append("image", imagePreview);
       }
@@ -65,18 +68,15 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
         const newPost = await response.json();
         // Assuming you have a function to update the state with the new post
         onAddPost(newPost);
-
         // Clear form fields and image preview
         setBody("");
         setImage(null);
         setImagePreview(null);
         setInputKey((prevKey) => prevKey + 1);
-
-        alert("Post created successfully!");
+        toast.success("Added Post");
       } else {
         console.log(response);
-
-        alert("Error creating post");
+        toast.error("Error Creating Post");
       }
     } catch (error) {
       console.error("Error creating post:", error);
@@ -136,7 +136,6 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
             accept="image/*"
             onChange={handleImageChange}
             style={{ display: "none" }}
-            id="formImage"
             key={inputKey}
           />
         </div>
@@ -145,6 +144,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
       <Button className="mt-2 mb-2" variant="primary" type="submit">
         Post
       </Button>
+      <ToastContainer></ToastContainer>
     </Form>
   );
 };
