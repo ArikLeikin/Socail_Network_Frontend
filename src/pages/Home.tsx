@@ -8,7 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 interface PostData {
-  id: number;
+  _id: number;
   title: string;
   user: string;
   body: string;
@@ -35,34 +35,19 @@ const getFormattedDateTime = (dateString: string) => {
 
 const Home: React.FC = () => {
   const [posts, setPosts] = useState<PostData[]>([]);
-  const [showError, setShowError] = useState(false);
   const [users, setUsers] = useState<{ [key: string]: UserData }>({});
   const user = JSON.parse(localStorage.getItem("user"));
+  const [isAddedNewPost, setAddedNewPost] = useState(false);
+
   const handleAddPost = async (newPost: PostData) => {
     try {
-      await fetchUserForPost(newPost.id, newPost.user);
-      setPosts([...posts, newPost]);
+      // await fetchUserForPost(newPost.id, newPost.user);
+      newPost.likes = [];
+      setPosts((prevPosts) => [newPost, ...prevPosts]);
+
+      window.location.reload();
     } catch (error) {
       console.error("Error adding post:", error);
-    }
-  };
-  const fetchUserForPost = async (postId: number, userId: string) => {
-    try {
-      const response = await fetch(`http://localhost:3000/user/${userId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${user.accessToken}`,
-        },
-      });
-
-      if (response.ok) {
-        const userData: UserData = await response.json();
-        setUsers((prevUsers) => ({ ...prevUsers, [userId]: userData }));
-      } else {
-        toast.error("Error fetching user data!");
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
     }
   };
 
@@ -76,17 +61,15 @@ const Home: React.FC = () => {
         if (response.ok) {
           console.log("Successful");
           const data: PostData[] = await response.json();
-          setPosts(data);
+          setPosts(data.reverse());
 
-          data.forEach((post) => {
-            fetchUserForPost(post.id, post.user);
-          });
+          // data.forEach((post) => {
+          //   fetchUserForPost(post.id, post.user);
+          // });
         } else {
           toast.error("Error fetching posts!");
         }
-      } catch (error) {
-        setShowError(true);
-      }
+      } catch (error) {}
     };
 
     fetchPosts();
@@ -94,13 +77,10 @@ const Home: React.FC = () => {
 
   return (
     <div className="d-flex flex-column align-items-center">
-      <AddPost onAddPost={handleAddPost} />
-      {posts
-        .slice()
-        .reverse()
-        .map((post, index) => (
-          <Post post={post} key={index} />
-        ))}
+      <AddPost onAddPost={handleAddPost} key={"tt"} />
+      {posts.map((post, index) => (
+        <Post post={post} key={post._id} />
+      ))}
     </div>
   );
 };
