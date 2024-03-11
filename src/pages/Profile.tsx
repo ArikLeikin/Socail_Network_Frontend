@@ -9,7 +9,6 @@ interface UserData {
 }
 
 const Profile = () => {
-  
   const user: UserData = JSON.parse(localStorage.getItem("user"));
   const [inputEmail, setInputEmail] = useState(user.email);
   const [currentPassword, setCurrentPassword] = useState("");

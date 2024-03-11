@@ -20,3 +20,8 @@ hr {
 .likeButton {
   cursor: pointer;
 }
+
+.myWrapper {
+  background-color: #ffffffbc;
+  border: 1px solid #d6d5d5;
+}

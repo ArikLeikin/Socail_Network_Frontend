@@ -6,7 +6,7 @@ import profileImg from "../../assets/profile.png"; // Replace with the correct p
 import { ToastContainer, toast } from "react-toastify";
 
 interface AddPostProps {
-  onAddPost: (newPost: { id: number; body: string; image?: File }) => void;
+  onAddPost: (newPost: { _id: number; body: string; image?: File }) => void;
 }
 
 const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
@@ -47,7 +47,6 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
       // Create a FormData object
       const formData = new FormData();
       formData.append("body", body);
-     
       if (image) {
         formData.append("file", image);
       }
@@ -77,8 +76,6 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
 
         toast.success("Post created successfully!");
       } else {
-        console.log(response);
-
         toast.error("Error creating post");
       }
     } catch (error) {
@@ -98,7 +95,6 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
       <h4 className="mt-2">Create Post</h4>
       <hr />
       <Form.Group
-        controlId="formBody"
         className="d-flex flex-column align-items-center mt-1 postBody"
         style={{ width: "100%" }}
       >
