@@ -39,6 +39,7 @@ const Home: React.FC = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [isAddedNewPost, setAddedNewPost] = useState(false);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+
   const handleAddPost = async (newPost: PostData) => {
     try {
       // await fetchUserForPost(newPost.id, newPost.user);
@@ -48,6 +49,12 @@ const Home: React.FC = () => {
     } catch (error) {
       console.error("Error adding post:", error);
     }
+  };
+
+  const handleRender = () => {
+    console.log("Handle Render");
+
+    forceUpdate();
   };
 
   useEffect(() => {
@@ -72,13 +79,13 @@ const Home: React.FC = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [ignored]);
 
   return (
     <div className="d-flex flex-column align-items-center">
       <AddPost onAddPost={handleAddPost} key={"tt"} />
       {posts.map((post, index) => (
-        <Post post={post} key={post._id} />
+        <Post renderHome={handleRender} post={post} key={post._id} />
       ))}
     </div>
   );

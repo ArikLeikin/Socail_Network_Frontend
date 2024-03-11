@@ -25,7 +25,11 @@ interface UserData {
   email: string;
 }
 
-const Post = ({ post }) => {
+type Props = {
+  renderHome: () => void;
+};
+
+const Post = ({ post, renderHome }) => {
   let userEmail = null;
   const user = JSON.parse(localStorage.getItem("user"));
   const [showComments, setShowComments] = useState(false);
@@ -73,6 +77,7 @@ const Post = ({ post }) => {
   const handleCommentAdded = (comment) => {
     console.log(comment);
     setPostComments([...postComments, comment]);
+    renderHome();
   };
 
   // Function to handle editing the post
@@ -153,7 +158,7 @@ const Post = ({ post }) => {
             src={"http://localhost:3000/public/" + editablePicture}
             alt=""
             className="mb-2"
-            style={{ maxWidth: "100%", height: "600px" }}
+            style={{ maxWidth: "100%", height: "400px" }}
           />
         )}
         {isEditable && (
