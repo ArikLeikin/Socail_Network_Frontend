@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent } from "react";
-
+import { editPassword } from "../utils/edit-password";
+import { editImage } from "../utils/edit-image";
 interface UserData {
   _id: string;
   accessToken: string;
@@ -10,69 +11,42 @@ interface UserData {
 const Profile = () => {
   
   const user: UserData = JSON.parse(localStorage.getItem("user"));
-  console.log("user",user);
-  
   const [inputEmail, setInputEmail] = useState(user.email);
-  const [inputPassword, setInputPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+const [newPassword, setNewPassword] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState(
-   ` http://localhost:3000/public/${selectedImage}`
-  );
-  const [isEditing, setIsEditing] = useState(false);
-  const [show, setShow] = useState(false);
-  const [loading, setLoading] = useState(false);
-
   const profileImageName = JSON.parse(
     localStorage.getItem("user")
   ).profileImage;
+  const [imagePreview, setImagePreview] = useState(
+   ` http://localhost:3000/public/${profileImageName}`
+  );
+  const [isEditing, setIsEditing] = useState(false);
+  const [,setShow] = useState(false);
+  const [,setLoading] = useState(false);
+
+
 
   const handleEdit = () => {
-    console.log("Edit");
     setIsEditing(true);
   };
-  console.log("profileImageName",profileImageName);
-  console.log("selectedImage",selectedImage);
+ 
+
+
+
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     console.log("Submit");
-    
-
     // Validate email and password (omitted for brevity)
-
     setLoading(true);
-
-
-    // Logic for handling image upload (omitted for brevity)
-    const formData = new FormData();
-    console.log("selectedImage",selectedImage);
-    
+    setIsEditing(true);
+    if (currentPassword.length >=6 && newPassword.length >= 6) {
+      await editPassword(user,setShow,setLoading,currentPassword,newPassword);
+    }
     if (selectedImage) {
-      formData.append("file", selectedImage);
+      await editImage(user,setShow,setLoading,selectedImage);
     }
-    const response = await fetch(`http://localhost:3000/user/picture/${user._id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${user.accessToken}`,
-      },
-      body: formData,
-    });
-    console.log("-----------response---------",response);
     
-    if(!response.ok){
-      setShow(true);
-      setLoading(false);
-      return;
-    }
-    const data = await response.json();
-    setImagePreview(`http://localhost:3000/public/${data.profileImage}`);
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        ...user,
-        email: inputEmail,
-        profileImage: data.profileImage,
-      })
-    );
     setLoading(false);
     setIsEditing(false); // Exit editing mode after successful submission
     window.location.reload();
@@ -112,10 +86,19 @@ const Profile = () => {
             type={isEditing ? "text" : "password"}
             placeholder="Password"
             className="custom-input mb-3"
-            value={inputPassword}
-            onChange={(e) => setInputPassword(e.target.value)}
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
             readOnly={!isEditing}
           />
+          {isEditing  && (
+          <input
+            type={isEditing ? "text" : "password"}
+            placeholder="New Password"
+            className="custom-input mb-3"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />)}
+            
           <img
             src={
               isEditing

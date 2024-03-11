@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
+// import { Form, Button, Alert } from "react-bootstrap";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
-import BackgroundImage from "../assets/background.png";
-import Logo from "../assets/logo.png";
+// import BackgroundImage from "../assets/background.png";
+// import Logo from "../assets/logo.png";
 import Google from "../assets/google.png";
 import Facebook from "../assets/facebook.png";
-import Github from "../assets/github.png";
-import { ToastContainer, toast } from "react-toastify";
+// import Github from "../assets/github.png";
+import { ToastContainer } from "react-toastify";
 
 const Login = ({ handleLogin }) => {
   const google = () => {
@@ -21,9 +21,9 @@ const Login = ({ handleLogin }) => {
   const [inputEmail, setInputEmail] = useState("");
   const [inputPassword, setInputPassword] = useState("");
 
-  const [show, setShow] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("user"));
+  const [, setShow] = useState(false);
+  const [, setLoading] = useState(false);
+  // const [, setIsLoggedIn] = useState(!!localStorage.getItem("user"));
 
   const navigate = useNavigate();
 
@@ -48,7 +48,7 @@ const Login = ({ handleLogin }) => {
 
       if (response.ok) {
         const loginData = await response.json();
-
+        
         localStorage.setItem("user", JSON.stringify(loginData));
 
         console.log("Login successful!");
@@ -65,18 +65,18 @@ const Login = ({ handleLogin }) => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("tokens");
-    localStorage.removeItem("user");
-    setIsLoggedIn(false);
-    // Redirect or perform any other actions after logout
-  };
+  // const handleLogout = () => {
+  //   localStorage.removeItem("tokens");
+  //   localStorage.removeItem("user");
+  //   setIsLoggedIn(false);
+  //   // Redirect or perform any other actions after logout
+  // };
 
-  const handlePassword = () => {};
+  // const handlePassword = () => {};
 
-  function delay(ms: number | undefined) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  // function delay(ms: number | undefined) {
+  //   return new Promise((resolve) => setTimeout(resolve, ms));
+  // }
 
   return (
     <div className="login">

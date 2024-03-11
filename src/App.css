@@ -209,7 +209,12 @@ input {
   color: inherit;
   text-decoration: none;
 }
-
+.nav-link{
+  color: white !important; 
+}
+.nav-link:hover{
+  color: #f8f9fac9 !important; 
+} 
 @media screen and (max-width: 992px) {
   .card {
     width: 100%;
