@@ -31,6 +31,10 @@ const Post = ({ post }) => {
   const [showComments, setShowComments] = useState(false);
   const [users, setUsers] = useState<{ [key: string]: UserData }>({});
   const [postComments, setPostComments] = useState<string[]>(post.comments);
+  const [isEditable, setEditable] = useState(false);
+  // State variables to manage editable content
+  const [editableBody, setEditableBody] = useState(post.body);
+  const [editablePicture, setEditablePicture] = useState(post.picture);
 
   const toggleComments = () => {
     setShowComments(!showComments);
@@ -68,17 +72,52 @@ const Post = ({ post }) => {
 
   const handleCommentAdded = (comment) => {
     console.log(comment);
+    setPostComments([...postComments, comment]);
+  };
 
-    // Logic to update the UI after a new comment is added
-    // For example, you could refetch the post data or update state
-    setPostComments([...postComments, comment]); // Add the new comment to the comments array
+  // Function to handle editing the post
+  const handleEditPost = () => {
+    setEditable(!isEditable);
+  };
+
+  // Function to handle file input change
+  const handleImageChange = async (event) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const form = new FormData();
+    form.append("file", event.target.files[0]);
+    form.append("user", user._id);
+    form.append("body", editableBody);
+
+    const response = await fetch(
+      `http://localhost:3000/posts/${post._id}/update`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+        body: form,
+      }
+    );
+
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditablePicture(file.name);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   useEffect(() => {
     fetchUserForPost(post.id, post.user);
   }, [post.id, post.user, postComments]);
 
-  const handleEditPost = () => {};
+  const handleChange = (event) => {
+    setEditableBody(event.target.value);
+  };
 
   return (
     <div
@@ -88,19 +127,41 @@ const Post = ({ post }) => {
     >
       <div className="center"></div>
 
-      <div className="post-wrapper d-flex flex-column align-items-center">
+      <div
+        className="post-wrapper d-flex flex-column align-items-center"
+        style={{ width: "100%" }}
+      >
         <div className="d-flex flex-column align-items-center mt-2">
           <h6>{users[post.user]?.email}</h6>
           <h6>{getFormattedDateTime(post.createdAt)}</h6>
         </div>
         <hr />
-        <p className="mt-2">{post.body}</p>
-        {post.picture && (
+        {/* Render editable body and picture */}
+        {isEditable ? (
+          <input
+            type="text"
+            value={editableBody}
+            className="form-control mx-2"
+            onChange={handleChange}
+            placeholder="edit body"
+          />
+        ) : (
+          <p className="mt-2">{editableBody}</p>
+        )}
+        {!isEditable && editablePicture && (
           <img
-            src={"http://localhost:3000/public/" + post.picture}
+            src={"http://localhost:3000/public/" + editablePicture}
             alt=""
             className="mb-2"
             style={{ maxWidth: "100%", height: "600px" }}
+          />
+        )}
+        {isEditable && (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="form-control-file"
           />
         )}
       </div>
