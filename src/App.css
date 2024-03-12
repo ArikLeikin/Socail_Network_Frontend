@@ -212,7 +212,18 @@ input {
   top: 150px;
   color: lightgray;
 }
-
+.image-wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.profile-image{
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
 .link {
   color: inherit;
   text-decoration: none;

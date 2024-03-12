@@ -68,14 +68,17 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
               {userData && (
                 <>
               <Nav className="me-auto">
+              <Nav.Link href="/news" className="nav-link">News</Nav.Link>
                 <Nav.Link className="nav-link">Posts</Nav.Link>
                 <Nav.Link className="nav-link">Comments</Nav.Link>
               </Nav>
               <Nav>
-                <img
+                <div className="image-wrapper">
+                <img className="profile-image" alt="profile-pic"
                 src={profileImage}
-                style={{ maxWidth: "35px", maxHeight: "35px", borderRadius: "50%", marginRight: "10px"}}
+              
                 />
+                </div>
               <NavDropdown title="Profile User" className="link" id="collapsible-nav-dropdown">
                   <NavDropdown.Item href ="/user-posts">Posts</NavDropdown.Item>
                   <NavDropdown.Item href ="/user-comments">Comments</NavDropdown.Item>
@@ -93,41 +96,6 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
         </BootstrapNavbar>
       );
     
-  //     <div className="d-flex">
-  //       {userData && (
-  //         <div className="profile-info">
-  //           <Link to="/profile">
-  //             <img
-  //               src={profileImage}
-  //               style={{ maxWidth: "25px", maxHeight: "25px" }}
-  //             />
-  //             <span className="display-name mx-3">Profile User</span>
-  //           </Link>
-  //         </div>
-  //       )}
-
-  //       <Link className="link" to="/" onClick={logout}>
-  //         Logout
-  //       </Link>
-  //     </div>
-  //   </div>
-  // );
-  
-
-  //   <Navbar bg="dark" data-bs-theme="dark">
-  //   <Container>
-  //     <Navbar.Brand href="#home">Navbar</Navbar.Brand>
-  //     <Nav className="me-auto">
-  //       <Nav.Link href="#home">Home</Nav.Link>
-  //       <Nav.Link href="#features">Features</Nav.Link>
-  //       <Nav.Link href="#pricing">Pricing</Nav.Link>
-  //     </Nav>
-  //   </Container>
-  // </Navbar>
-  
-
-    
-
 };
 
 export default AuthNavbar;
