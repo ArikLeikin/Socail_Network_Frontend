@@ -16,7 +16,7 @@ interface AuthNavbarProps {
   profile;
 }
 
-interface UserData {
+export interface UserData {
   _id: string;
   accessToken: string;
   refreshToken: string;
@@ -28,9 +28,11 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
   const [userData, setUserData] = useState<User | null>(user);
   const [profileImage, setProfileImage] = useState<string>();
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    console.log("storedUser", storedUser);
+   
     if (storedUser) {
       const parsedUser: UserData = JSON.parse(storedUser);
       setUserData(JSON.parse(storedUser));
@@ -61,16 +63,23 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
       return (
         <BootstrapNavbar collapseOnSelect expand="lg" className="navbar navbar-expand navbar-light bg-dark">
           <Container>
-            <BootstrapNavbar.Brand> < Link to="/" className="nav-link">Social AD</Link></BootstrapNavbar.Brand>
+            <div> < Link to="/" className="nav-link">Social AD</Link></div>
             
             <BootstrapNavbar.Toggle aria-controls="responsive-navbar-nav" />
             <BootstrapNavbar.Collapse id="responsive-navbar-nav">
               {userData && (
                 <>
               <Nav className="me-auto">
-              <Nav.Link href="/news" className="nav-link">News</Nav.Link>
-                <Nav.Link className="nav-link">Posts</Nav.Link>
-                <Nav.Link className="nav-link">Comments</Nav.Link>
+             
+                <Link to="/news" className="nav-link">
+                News
+                </Link>
+                <Link to="/news" className="nav-link">
+                Posts
+                </Link>
+                <Link to="/news" className="nav-link">
+                Comments
+                </Link>
               </Nav>
               <Nav>
                 <div className="image-wrapper">
@@ -80,14 +89,29 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
                 />
                 </div>
               <NavDropdown title="Profile User" className="link" id="collapsible-nav-dropdown">
-                  <NavDropdown.Item href ="/user-posts">Posts</NavDropdown.Item>
-                  <NavDropdown.Item href ="/user-comments">Comments</NavDropdown.Item>
-                  <NavDropdown.Item href="/profile" className="link">Edit</NavDropdown.Item>
+                  <NavDropdown.Item as="div">
+                    <Link to={`/UserPosts`} className="link">
+                      Posts                                 
+                    </Link>               
+                    </NavDropdown.Item>
+                  <NavDropdown.Item as="div">
+                    <Link to={`/UserComments`} className="link">
+                    Comments
+                    </Link>
+                    </NavDropdown.Item>
+                  <NavDropdown.Item as="div">
+                    <Link to={`/profile`} className="link">
+                    Edit
+                    </Link>
+                    </NavDropdown.Item>
               </NavDropdown>
-                <Nav.Link className="nav-link" onClick={logout}><Link to="/" className="link">Logout</Link></Nav.Link>
-                <Nav.Link className="nav-link" eventKey={2}>
+                <Nav className="nav-link" onClick={logout}>
+                  <Link to="/" className="link">Logout
+                  </Link>
+                  </Nav>
+                <Nav className="nav-link">
                  Settings
-                </Nav.Link>
+                </Nav>
               </Nav>
               </>
               )}

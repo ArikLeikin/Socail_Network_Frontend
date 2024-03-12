@@ -10,7 +10,7 @@ import Likes from "../likes/Likes";
 import Comments from "../comments/Comment";
 import AddComment from "../comments/AddComment";
 
-interface PostData {
+export interface PostData {
   id: number;
   title: string;
   user: string;

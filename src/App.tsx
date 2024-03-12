@@ -11,6 +11,7 @@ import NotFound from "./components/NotFound";
 import Home from "./pages/Home";
 import News from "./pages/News";
 import { Navigate } from "react-router-dom";
+import UserPosts from "./pages/UserPosts";
 
 interface User {
   _id: string;
@@ -32,10 +33,10 @@ function App() {
     setIsLoggedIn(false);
   };
 
-  const handleProfileChange = (newProfileData: User) => {
-    setProfile(newProfileData);
-    setIsLoggedIn(!!newProfileData); // Update isLoggedIn based on profile data
-  };
+  // const handleProfileChange = (newProfileData: User) => {
+  //   setProfile(newProfileData);
+  //   setIsLoggedIn(!!newProfileData); // Update isLoggedIn based on profile data
+  // };
 
   useEffect(() => {
     const validateAccessToken = async () => {
@@ -85,6 +86,8 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/news" element={<News />} />
+            <Route path="/UserPosts" element={<UserPosts />} />
+            
           </>
         ) : (
           <>
