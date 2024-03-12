@@ -1,19 +1,16 @@
 import React, { useState } from "react";
 import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
-import { Image as ImageIcon } from "react-bootstrap-icons";
-import "./addPost.css";
+import { Image as ImageIcon, Key } from "react-bootstrap-icons";
 import profileImg from "../../assets/profile.png"; // Replace with the correct path
 import { ToastContainer, toast } from "react-toastify";
 
-interface AddPostProps {
-  onAddPost: (newPost: { _id: number; body: string; image?: File }) => void;
-}
-
-const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
+const PostEdit = ({ post }) => {
   const [body, setBody] = useState("");
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [inputKey, setInputKey] = useState(0);
+  const [image1, setImage] = useState<File | null>(null);
+  const [imagePreview1, setImagePreview] = useState<string | null>(null);
+  const [inputKey, setInputKey] = useState(
+    `formImage-${post._id}-${Date.now()}`
+  ); // Unique inputKey for PostEditUnique component
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedImage = e.target.files?.[0];
@@ -26,9 +23,6 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(selectedImage);
-
-      // Increment inputKey to trigger re-render of the file input
-      setInputKey((prevKey) => prevKey + 1);
     }
   };
 
@@ -47,8 +41,8 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
       // Create a FormData object
       const formData = new FormData();
       formData.append("body", body);
-      if (image) {
-        formData.append("file", image);
+      if (image1) {
+        formData.append("file", image1);
       }
       const accessToken = JSON.parse(localStorage.getItem("user")).accessToken;
       const userId = JSON.parse(localStorage.getItem("user"))._id;
@@ -65,13 +59,14 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
       if (response.ok) {
         const newPost = await response.json();
         // Assuming you have a function to update the state with the new post
-        onAddPost(newPost);
+        // onAddPost(newPost);
 
         // Clear form fields and image preview
         setBody("");
         setImage(null);
         setImagePreview(null);
-        setInputKey((prevKey) => prevKey + 1);
+        setInputKey(`formImage-${post._id}-${Date.now()}`);
+
         console.log(response);
 
         toast.success("Post created successfully!");
@@ -87,19 +82,22 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
   const handleRemoveImage = () => {
     setImage(null);
     setImagePreview(null);
-    setInputKey((prevKey) => prevKey + 1);
   };
 
   return (
-    <Form onSubmit={handleSubmit} className="myWrapper mt-5">
-      <h4 className="mt-2">Create Post</h4>
+    <Form
+      onSubmit={handleSubmit}
+      className="myWrapper"
+      style={{ width: "100%" }}
+    >
+      {/* <h4 className="mt-2">Create Post</h4> */}
       <hr />
       <Form.Group
         className="d-flex flex-column align-items-center mt-1 postBody"
         style={{ width: "100%" }}
       >
         <Form.Control
-          key={"create"}
+          key={"1"}
           as="textarea"
           rows={3}
           className="p-0" // Added margin on top and bottom
@@ -108,11 +106,10 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
           value={body}
           onChange={(e) => setBody(e.target.value)}
         />
-        {imagePreview && (
+        {imagePreview1 && (
           <div className="position-relative">
             <BootstrapImage
-              key={"createImage"}
-              src={imagePreview}
+              src={imagePreview1}
               alt="Selected Image"
               className="mt-2 mb-2"
               style={{ maxWidth: "100%", maxHeight: "50%" }}
@@ -126,7 +123,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
             <label htmlFor="formImage" className="btn btn-outline-dark mr-2">
               <ImageIcon /> Choose Image
             </label>
-            {imagePreview && (
+            {imagePreview1 && (
               <Button variant="danger" onClick={handleRemoveImage}>
                 <span aria-hidden="true">&times;</span>
               </Button>
@@ -137,7 +134,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
             accept="image/*"
             onChange={handleImageChange}
             style={{ display: "none" }}
-            id="formImage"
+            id="formImage1"
             key={inputKey}
           />
         </div>
@@ -151,4 +148,4 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
   );
 };
 
-export default AddPost;
+export default PostEdit;

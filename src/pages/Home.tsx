@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { Alert } from "react-bootstrap";
 import "./login.css";
 import BackgroundImage from "../assets/background.png";
@@ -38,17 +38,23 @@ const Home: React.FC = () => {
   const [users, setUsers] = useState<{ [key: string]: UserData }>({});
   const user = JSON.parse(localStorage.getItem("user"));
   const [isAddedNewPost, setAddedNewPost] = useState(false);
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const handleAddPost = async (newPost: PostData) => {
     try {
       // await fetchUserForPost(newPost.id, newPost.user);
       newPost.likes = [];
       setPosts((prevPosts) => [newPost, ...prevPosts]);
-
-      window.location.reload();
+      forceUpdate();
     } catch (error) {
       console.error("Error adding post:", error);
     }
+  };
+
+  const handleRender = () => {
+    console.log("Handle Render");
+
+    forceUpdate();
   };
 
   useEffect(() => {
@@ -73,13 +79,13 @@ const Home: React.FC = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [ignored]);
 
   return (
     <div className="d-flex flex-column align-items-center">
       <AddPost onAddPost={handleAddPost} key={"tt"} />
       {posts.map((post, index) => (
-        <Post post={post} key={post._id} />
+        <Post renderHome={handleRender} post={post} key={post._id} />
       ))}
     </div>
   );
