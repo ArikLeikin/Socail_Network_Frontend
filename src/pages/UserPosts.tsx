@@ -37,7 +37,10 @@ const UserPosts = ()=> {
 <div>
   <h1>User Posts</h1>
   {posts.map((post: React.JSX.Element, index: number) => (
+    <>
     <Post key={index} post={post} />
+    </>
+ 
 
     // <Card key={index} style={{ width: '18rem', marginBottom: '1rem' }}>
     //   <Card.Img variant="top" src={`http://localhost:3000/public/${post.picture}`} />

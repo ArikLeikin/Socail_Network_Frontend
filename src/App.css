@@ -5,7 +5,19 @@ body {
   background-attachment: fixed;
   opacity: 1;
 }
+.card-highlight{
+ display: flex;
+ flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.comment-card-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
+}
 .myNavbar {
   height: 50px;
   background-color: rgba(0, 0, 0, 0.698);
@@ -257,4 +269,6 @@ input {
     height: 0.5px;
     width: 300px;
   }
+
+
 }
