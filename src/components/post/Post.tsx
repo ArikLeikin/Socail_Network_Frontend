@@ -9,6 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import Likes from "../likes/Likes";
 import Comments from "../comments/Comment";
 import AddComment from "../comments/AddComment";
+import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
+import { Image as ImageIcon, Key } from "react-bootstrap-icons";
 
 interface PostData {
   id: number;
@@ -38,11 +40,11 @@ const Post = ({ post, renderHome }) => {
   const [isEditable, setEditable] = useState(false);
   // State variables to manage editable content
   const [editableBody, setEditableBody] = useState(post.body);
-  const [editablePicture, setEditablePicture] = useState(post.picture);
+  const [editablePicture, setEditablePicture] = useState<File | null>(null); // Change to accept File objects
 
-  const toggleComments = () => {
-    setShowComments(!showComments);
-  };
+  // const toggleComments = () => {
+  //   setShowComments(!showComments);
+  // };
 
   const getFormattedDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -89,30 +91,9 @@ const Post = ({ post, renderHome }) => {
   const handleImageChange = async (event) => {
     const user = JSON.parse(localStorage.getItem("user"));
 
-    const form = new FormData();
-    form.append("file", event.target.files[0]);
-    form.append("user", user._id);
-    form.append("body", editableBody);
-
-    const response = await fetch(
-      `http://localhost:3000/posts/${post._id}/update`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${user.accessToken}`,
-          "Content-Type": "multipart/form-data",
-        },
-        body: form,
-      }
-    );
-
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setEditablePicture(file.name);
-      };
-      reader.readAsDataURL(file);
+      setEditablePicture(file);
     }
   };
 
@@ -124,6 +105,46 @@ const Post = ({ post, renderHome }) => {
     setEditableBody(event.target.value);
   };
 
+  const handleRemoveImage = () => {
+    setEditablePicture(null);
+  };
+
+  const handleSavePost = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("body", editableBody);
+      if (editablePicture) {
+        formData.append("file", editablePicture);
+      }
+      const accessToken = JSON.parse(localStorage.getItem("user")).accessToken;
+      const userId = JSON.parse(localStorage.getItem("user"))._id;
+      formData.append("user", userId);
+
+      // Make a POST request to your backend endpoint
+      const response = await fetch(
+        `http://localhost:3000/posts/${post._id}/update`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (response.ok) {
+        setEditable(false);
+        toast.success("Updated Post Successfuly");
+        renderHome();
+      } else {
+        toast.error("Error creating post");
+      }
+    } catch (error) {
+      console.error("Error creating post:", error);
+      alert("An error occurred while creating the post");
+    }
+  };
+
   return (
     <div
       className="myWrapper mt-5"
@@ -131,7 +152,6 @@ const Post = ({ post, renderHome }) => {
       style={{ overflowWrap: "break-word" }}
     >
       <div className="center"></div>
-
       <div
         className="post-wrapper d-flex flex-column align-items-center"
         style={{ width: "100%" }}
@@ -141,33 +161,64 @@ const Post = ({ post, renderHome }) => {
           <h6>{getFormattedDateTime(post.createdAt)}</h6>
         </div>
         <hr />
-        {/* Render editable body and picture */}
-        {isEditable ? (
-          <input
-            type="text"
-            value={editableBody}
-            className="form-control mx-2"
-            onChange={handleChange}
-            placeholder="edit body"
-          />
+
+        {!isEditable ? (
+          <div className="d-flex flex-column">
+            <p className="mt-2">{editableBody}</p>
+            {post.picture && (
+              <img
+                src={`http://localhost:3000/public/${post.picture}`}
+                alt=""
+                className="mb-2"
+                style={{ maxWidth: "100%", height: "400px" }}
+              />
+            )}
+          </div>
         ) : (
-          <p className="mt-2">{editableBody}</p>
-        )}
-        {!isEditable && editablePicture && (
-          <img
-            src={"http://localhost:3000/public/" + editablePicture}
-            alt=""
-            className="mb-2"
-            style={{ maxWidth: "100%", height: "400px" }}
-          />
-        )}
-        {isEditable && (
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="form-control-file"
-          />
+          <Form style={{ width: "100%" }}>
+            <hr />
+            <Form.Group
+              className="d-flex flex-column align-items-center mt-1 postBody"
+              style={{ width: "100%" }}
+            >
+              <Form.Control
+                key={"1"}
+                as="textarea"
+                rows={3}
+                className="p-0" // Added margin on top and bottom
+                style={{ width: "90%" }}
+                placeholder="Share your thoughts"
+                value={editableBody}
+                onChange={(e) => setEditableBody(e.target.value)}
+              />
+              {editablePicture && (
+                <div className="position-relative">
+                  <BootstrapImage
+                    src={URL.createObjectURL(editablePicture)} // Render the file object as URL
+                    alt="Selected Image"
+                    className="mt-2 mb-2"
+                    style={{ maxWidth: "100%", maxHeight: "50%" }}
+                  />
+                </div>
+              )}
+              <div className="d-flex flex-column align-items-center mt-2 my-2">
+                <div className="d-flex mt-2">
+                  {editablePicture && (
+                    <Button variant="danger" onClick={handleRemoveImage}>
+                      <span aria-hidden="true">&times;</span>
+                    </Button>
+                  )}
+                </div>
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  id="formImage"
+                />
+              </div>
+            </Form.Group>
+            <ToastContainer />
+          </Form>
         )}
       </div>
       <hr />
@@ -177,7 +228,7 @@ const Post = ({ post, renderHome }) => {
       >
         <Likes post={post} key={1} />
         <Comments post={post} key={2} />
-        {user && user._id === post.user && (
+        {!isEditable && user && user._id === post.user ? (
           <button
             type="button"
             className="btn btn-light px-0 py-0"
@@ -185,11 +236,25 @@ const Post = ({ post, renderHome }) => {
           >
             Edit Post
           </button>
+        ) : (
+          user._id === post.user && (
+            <button
+              type="button"
+              className="btn btn-light px-0 py-0"
+              onClick={handleSavePost}
+            >
+              Save Post
+            </button>
+          )
         )}
       </div>
       <hr />
       <div className="d-flex justify-content-center" style={{ width: "100%" }}>
-        <AddComment post={post} onCommentAdded={handleCommentAdded} />
+        <AddComment
+          post={post}
+          onCommentAdded={handleCommentAdded}
+          key={"addComment"}
+        />
       </div>
     </div>
   );
