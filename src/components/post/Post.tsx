@@ -201,20 +201,21 @@ const Post = ({ post, renderHome }) => {
                   />
                 </div>
               )}
-              <div className="d-flex flex-column align-items-center mt-2 my-2">
-                <div className="d-flex mt-2">
+              <div className="d-flex  align-items-center mt-2 my-2">
+                <Form.Control
+                  className="mx-2"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  id="formImage"
+                />
+                <div className="d-flex">
                   {editablePicture && (
                     <Button variant="danger" onClick={handleRemoveImage}>
                       <span aria-hidden="true">&times;</span>
                     </Button>
                   )}
                 </div>
-                <Form.Control
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  id="formImage"
-                />
               </div>
             </Form.Group>
             <ToastContainer />
