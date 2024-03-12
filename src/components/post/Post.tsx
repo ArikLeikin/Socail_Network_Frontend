@@ -12,7 +12,7 @@ import AddComment from "../comments/AddComment";
 import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
 import { Image as ImageIcon, Key } from "react-bootstrap-icons";
 
-interface PostData {
+export interface PostData {
   id: number;
   title: string;
   user: string;

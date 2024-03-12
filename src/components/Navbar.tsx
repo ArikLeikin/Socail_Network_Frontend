@@ -6,14 +6,12 @@ import BootstrapNavbar  from "react-bootstrap/Navbar";
 interface User {
   displayName: string;
   photos: { value: string }[];
-  // Add other properties if needed
 }
 
 interface NavbarProps {
   user?: User | null;
 }
 
-// ... (your imports)
 
 const Navbar: React.FC<NavbarProps> = ({ user }) => {
   const [userData, setUserData] = useState<User | null>(user);
@@ -75,16 +73,6 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
           
         </Container>
       </BootstrapNavbar>
-
-
-    // <div className="myNavbar">
-    //   <span className="logo">
-    //     <Link className="link" to="/">
-    //       AD Social
-    //     </Link>
-    //   </span>
-    //   {userData ? renderLoggedInLinks() : renderLoggedOutLink()}
-    // </div>
   );
 };
 

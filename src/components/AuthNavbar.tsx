@@ -16,7 +16,7 @@ interface AuthNavbarProps {
   profile;
 }
 
-interface UserData {
+export interface UserData {
   _id: string;
   accessToken: string;
   refreshToken: string;
@@ -28,9 +28,11 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
   const [userData, setUserData] = useState<User | null>(user);
   const [profileImage, setProfileImage] = useState<string>();
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    console.log("storedUser", storedUser);
+   
     if (storedUser) {
       const parsedUser: UserData = JSON.parse(storedUser);
       setUserData(JSON.parse(storedUser));
@@ -61,30 +63,55 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
       return (
         <BootstrapNavbar collapseOnSelect expand="lg" className="navbar navbar-expand navbar-light bg-dark">
           <Container>
-            <BootstrapNavbar.Brand> < Link to="/" className="nav-link">Social AD</Link></BootstrapNavbar.Brand>
+            <div> < Link to="/" className="nav-link">Social AD</Link></div>
             
             <BootstrapNavbar.Toggle aria-controls="responsive-navbar-nav" />
             <BootstrapNavbar.Collapse id="responsive-navbar-nav">
               {userData && (
                 <>
               <Nav className="me-auto">
-                <Nav.Link className="nav-link">Posts</Nav.Link>
-                <Nav.Link className="nav-link">Comments</Nav.Link>
+             
+                <Link to="/news" className="nav-link">
+                News
+                </Link>
+                <Link to="/news" className="nav-link">
+                Posts
+                </Link>
+                <Link to="/news" className="nav-link">
+                Comments
+                </Link>
               </Nav>
               <Nav>
-                <img
+                <div className="image-wrapper">
+                <img className="profile-image" alt="profile-pic"
                 src={profileImage}
-                style={{ maxWidth: "35px", maxHeight: "35px", borderRadius: "50%", marginRight: "10px"}}
+              
                 />
+                </div>
               <NavDropdown title="Profile User" className="link" id="collapsible-nav-dropdown">
-                  <NavDropdown.Item href ="/user-posts">Posts</NavDropdown.Item>
-                  <NavDropdown.Item href ="/user-comments">Comments</NavDropdown.Item>
-                  <NavDropdown.Item href="/profile" className="link">Edit</NavDropdown.Item>
+                  <NavDropdown.Item as="div">
+                    <Link to={`/UserPosts`} className="link">
+                      Posts                                 
+                    </Link>               
+                    </NavDropdown.Item>
+                  <NavDropdown.Item as="div">
+                    <Link to={`/UserComments`} className="link">
+                    Comments
+                    </Link>
+                    </NavDropdown.Item>
+                  <NavDropdown.Item as="div">
+                    <Link to={`/profile`} className="link">
+                    Edit
+                    </Link>
+                    </NavDropdown.Item>
               </NavDropdown>
-                <Nav.Link className="nav-link" onClick={logout}><Link to="/" className="link">Logout</Link></Nav.Link>
-                <Nav.Link className="nav-link" eventKey={2}>
+                <Nav className="nav-link" onClick={logout}>
+                  <Link to="/" className="link">Logout
+                  </Link>
+                  </Nav>
+                <Nav className="nav-link">
                  Settings
-                </Nav.Link>
+                </Nav>
               </Nav>
               </>
               )}
@@ -93,41 +120,6 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
         </BootstrapNavbar>
       );
     
-  //     <div className="d-flex">
-  //       {userData && (
-  //         <div className="profile-info">
-  //           <Link to="/profile">
-  //             <img
-  //               src={profileImage}
-  //               style={{ maxWidth: "25px", maxHeight: "25px" }}
-  //             />
-  //             <span className="display-name mx-3">Profile User</span>
-  //           </Link>
-  //         </div>
-  //       )}
-
-  //       <Link className="link" to="/" onClick={logout}>
-  //         Logout
-  //       </Link>
-  //     </div>
-  //   </div>
-  // );
-  
-
-  //   <Navbar bg="dark" data-bs-theme="dark">
-  //   <Container>
-  //     <Navbar.Brand href="#home">Navbar</Navbar.Brand>
-  //     <Nav className="me-auto">
-  //       <Nav.Link href="#home">Home</Nav.Link>
-  //       <Nav.Link href="#features">Features</Nav.Link>
-  //       <Nav.Link href="#pricing">Pricing</Nav.Link>
-  //     </Nav>
-  //   </Container>
-  // </Navbar>
-  
-
-    
-
 };
 
 export default AuthNavbar;
