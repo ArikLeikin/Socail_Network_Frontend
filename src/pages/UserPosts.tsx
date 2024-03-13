@@ -34,10 +34,17 @@ const UserPosts = ()=> {
 
 
   return (
-<div>
+<>
+  <div className="card-highlight">
   <h1>User Posts</h1>
-  {posts.map((post: React.JSX.Element, index: number) => (
-    <Post key={index} post={post} />
+  </div>
+  {posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((post: React.JSX.Element, index: number) => (
+   
+    <div className="UserPosts">
+    <Post key={index} post={post} renderHome={undefined} />
+    </div>
+   
+ 
 
     // <Card key={index} style={{ width: '18rem', marginBottom: '1rem' }}>
     //   <Card.Img variant="top" src={`http://localhost:3000/public/${post.picture}`} />
@@ -55,7 +62,7 @@ const UserPosts = ()=> {
     //   </Card.Body>
     // </Card>
   ))}
-</div>
+</>
   );
 };
 

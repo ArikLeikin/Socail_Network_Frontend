@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import News from "./pages/News";
 import { Navigate } from "react-router-dom";
 import UserPosts from "./pages/UserPosts";
+import UserComments from "./pages/UserComments";
 
 interface User {
   _id: string;
@@ -87,6 +88,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/news" element={<News />} />
             <Route path="/UserPosts" element={<UserPosts />} />
+            <Route path="/UserComments" element={<UserComments />} />
             
           </>
         ) : (

@@ -75,7 +75,9 @@ const Home: React.FC = () => {
         } else {
           toast.error("Error fetching posts!");
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
     };
 
     fetchPosts();
