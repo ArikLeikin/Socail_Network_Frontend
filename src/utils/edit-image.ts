@@ -4,7 +4,6 @@ import { UserData } from "../pages/Profile";
 
 export const editImage = async (
   user: UserData,
-  setShow: React.Dispatch<React.SetStateAction<boolean>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   selectedImage: File | null
 ): Promise<string | undefined> => {
@@ -36,7 +35,6 @@ export const editImage = async (
     } else if (response.status === 500) {
       toast.error("Server error");
     }
-    setShow(true);
     setLoading(false);
     return;
   }

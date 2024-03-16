@@ -92,7 +92,7 @@ const Login = ({ handleLogin }) => {
       setIsLoggedIn(true);
       console.log("Login successful!");
       handleLogin();
-      navigate("/profile");
+      navigate("/home");
     } else {
       console.log("response auth google", response);
       console.log("Failed to get user information");

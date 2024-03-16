@@ -56,7 +56,7 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
    await fetch("http://localhost:3000/auth/logout", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
+        Authorization: `Bearer ${userData.refreshToken}`,
         "Content-Type": "application/json",
       },
     });

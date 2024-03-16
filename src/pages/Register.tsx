@@ -54,7 +54,7 @@ const Register = () => {
         const pictureFormData = new FormData();
         pictureFormData.append("file", selectedImage);
         const userId = responseData._id;
-        if(responseData.profileImage !== "default_picture.jpeg"){
+        if(selectedImage){
           const response = await fetch(
             `http://localhost:3000/user/picture/${userId}`,
             {
@@ -66,10 +66,11 @@ const Register = () => {
             }
           );
 
-            if(response.ok){
-              console.log("Image uploaded successfully");
-            }
+          if(response.ok){
+            console.log("Image uploaded successfully");
+                 
           }
+        }
           navigate("/");
         
       } else {

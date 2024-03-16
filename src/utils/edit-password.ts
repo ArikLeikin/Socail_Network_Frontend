@@ -4,7 +4,6 @@ import { UserData } from "../pages/Profile";
 
 export const editPassword = async (
   user: UserData,
-  setShow: React.Dispatch<React.SetStateAction<boolean>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   currentPassword: string,
   newPassword: string
@@ -39,7 +38,6 @@ export const editPassword = async (
     } else if (response.status === 500) {
       toast.error("Server error");
     }
-    setShow(true);
     setLoading(false);
     return;
   } else {
