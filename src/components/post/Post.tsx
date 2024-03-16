@@ -42,10 +42,6 @@ const Post = ({ post, renderHome }) => {
   const [editableBody, setEditableBody] = useState(post.body);
   const [editablePicture, setEditablePicture] = useState<File | null>(null); // Change to accept File objects
 
-  // const toggleComments = () => {
-  //   setShowComments(!showComments);
-  // };
-
   const getFormattedDateTime = (dateString: string) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -145,6 +141,29 @@ const Post = ({ post, renderHome }) => {
     }
   };
 
+  const handleDeletePost = async () => {
+    try {
+      const postId = post._id;
+      const accessToken = JSON.parse(localStorage.getItem("user")).accessToken;
+
+      const response = await fetch(`http://localhost:3000/posts/${postId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (response.ok) {
+        renderHome();
+        toast.success("Deleted Post");
+      } else {
+        toast.error("Error Deleting Post");
+      }
+    } catch (error) {
+      console.error("Error creating post:", error);
+      alert("An error occurred while creating the post");
+    }
+  };
+
   return (
     <div
       className="myWrapper mt-5"
@@ -230,13 +249,22 @@ const Post = ({ post, renderHome }) => {
         <Likes post={post} key={1} />
         <Comments post={post} key={2} />
         {!isEditable && user && user._id === post.user ? (
-          <button
-            type="button"
-            className="btn btn-light px-0 py-0"
-            onClick={handleEditPost}
-          >
-            Edit Post
-          </button>
+          <>
+            <button
+              type="button"
+              className="btn btn-light px-0 py-0"
+              onClick={handleEditPost}
+            >
+              Edit Post
+            </button>
+            <button
+              type="button"
+              className="btn btn-light px-0 py-0"
+              onClick={handleDeletePost}
+            >
+              Delete Post
+            </button>
+          </>
         ) : (
           user._id === post.user && (
             <button
