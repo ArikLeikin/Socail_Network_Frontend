@@ -172,7 +172,7 @@ const Post = ({ post, renderHome }) => {
 
   return (
     <div
-      className="myWrapper mt-5"
+      className="myWrapper post-container mt-5" 
       key={post.id}
       style={{ overflowWrap: "break-word" }}
     >
