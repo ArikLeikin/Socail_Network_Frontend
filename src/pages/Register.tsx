@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
+// import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -47,28 +47,31 @@ const Register = () => {
       });
 
       const responseData = await response.json();
-
+      console.log("responseData", responseData);
+      
       if (response.ok) {
         // Registration successful
         const pictureFormData = new FormData();
         pictureFormData.append("file", selectedImage);
-        console.log(responseData);
-        console.log(pictureFormData);
-
         const userId = responseData._id;
+        if(responseData.profileImage !== "default_picture.jpeg"){
+          const response = await fetch(
+            `http://localhost:3000/user/picture/${userId}`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: `Bearer ${responseData.accessToken}`,
+              },
+              body: pictureFormData,
+            }
+          );
 
-        const response = await fetch(
-          `http://localhost:3000/user/picture/${userId}`,
-          {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${responseData.accessToken}`,
-            },
-            body: pictureFormData,
+            if(response.ok){
+              console.log("Image uploaded successfully");
+            }
           }
-        );
-        navigate("/");
-        console.log("Registration successful");
+          navigate("/");
+        
       } else {
         // Handle registration failure
         if (response.status === 409) {
@@ -87,9 +90,9 @@ const Register = () => {
     setLoading(false);
   };
   
-  const handlePassword = () => {
-    // Handle password logic if needed
-  };
+  // const handlePassword = () => {
+  //   // Handle password logic if needed
+  // };
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -115,9 +118,9 @@ const Register = () => {
     return password.length >= 6;
   };
 
-  function delay(ms: number | undefined) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  // function delay(ms: number | undefined) {
+  //   return new Promise((resolve) => setTimeout(resolve, ms));
+  // }
 
   return (
     <div className="login">
