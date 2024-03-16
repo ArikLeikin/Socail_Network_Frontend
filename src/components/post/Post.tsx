@@ -12,6 +12,11 @@ import AddComment from "../comments/AddComment";
 import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
 import { Image as ImageIcon, Key } from "react-bootstrap-icons";
 
+const toastConfiguration = {
+  autoClose: 750, // Adjust auto close duration to 0.75 seconds
+  draggable: false, // Disable dragging to dismiss
+};
+
 export interface PostData {
   id: number;
   title: string;
@@ -65,7 +70,7 @@ const Post = ({ post, renderHome }) => {
         const userData: UserData = await response.json();
         setUsers((prevUsers) => ({ ...prevUsers, [userId]: userData }));
       } else {
-        toast.error("Error fetching user data!");
+        toast.error("Error fetching user data!", toastConfiguration);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -130,10 +135,10 @@ const Post = ({ post, renderHome }) => {
 
       if (response.ok) {
         setEditable(false);
-        toast.success("Updated Post Successfuly");
+        toast.success("Updated Post Successfuly", toastConfiguration);
         renderHome();
       } else {
-        toast.error("Error creating post");
+        toast.error("Error creating post", toastConfiguration);
       }
     } catch (error) {
       console.error("Error creating post:", error);
@@ -154,9 +159,9 @@ const Post = ({ post, renderHome }) => {
       });
       if (response.ok) {
         renderHome();
-        toast.success("Deleted Post");
+        toast.success("Deleted Post", toastConfiguration);
       } else {
-        toast.error("Error Deleting Post");
+        toast.error("Error Deleting Post", toastConfiguration);
       }
     } catch (error) {
       console.error("Error creating post:", error);
