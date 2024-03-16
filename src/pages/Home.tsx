@@ -85,10 +85,15 @@ const Home: React.FC = () => {
 
   return (
     <div className="d-flex flex-column align-items-center">
-      <AddPost onAddPost={handleAddPost} key={"tt"} />
-      {posts.map((post, index) => (
-        <Post renderHome={handleRender} post={post} key={post._id} />
-      ))}
+      <div
+        className="d-flex flex-column align-items-center"
+        style={{ width: "35%" }}
+      >
+        <AddPost onAddPost={handleAddPost} key={"tt"} />
+        {posts.map((post, index) => (
+          <Post renderHome={handleRender} post={post} key={post._id} />
+        ))}
+      </div>
     </div>
   );
 };

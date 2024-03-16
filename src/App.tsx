@@ -13,6 +13,7 @@ import News from "./pages/News";
 import { Navigate } from "react-router-dom";
 import UserPosts from "./pages/UserPosts";
 import UserComments from "./pages/UserComments";
+import CommentsView from "./pages/CommentsView";
 
 interface User {
   _id: string;
@@ -75,11 +76,7 @@ function App() {
 
   return (
     <Router>
-      {isLoggedIn ? (
-        <AuthNavbar profile={profile} handleLogout={handleLogout} />
-      ) : (
-        <Navbar />
-      )}
+      {isLoggedIn ? <AuthNavbar handleLogout={handleLogout} /> : <Navbar />}
       <Routes>
         {isLoggedIn ? (
           <>
@@ -89,7 +86,7 @@ function App() {
             <Route path="/news" element={<News />} />
             <Route path="/UserPosts" element={<UserPosts />} />
             <Route path="/UserComments" element={<UserComments />} />
-            
+            <Route path="/comments/:postId" element={<CommentsView />} />
           </>
         ) : (
           <>
