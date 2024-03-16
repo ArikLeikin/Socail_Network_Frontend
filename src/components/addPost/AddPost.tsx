@@ -118,7 +118,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
               style={{ maxWidth: "100%", maxHeight: "50%" }}
             />
           </div>
-        )}e
+        )}
         <div className="d-flex flex-column align-items-center mt-2">
           <div className="d-flex mt-2">
             {" "}
