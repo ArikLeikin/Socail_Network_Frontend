@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {Container, Nav, NavDropdown } from "react-bootstrap";
-import BootstrapNavbar  from "react-bootstrap/Navbar";
+import { Container, Nav, NavDropdown } from "react-bootstrap";
+import BootstrapNavbar from "react-bootstrap/Navbar";
 const URL = "http://localhost:3000";
 
 interface User {
@@ -23,27 +23,25 @@ export interface UserData {
   profileImage: string;
 }
 
-const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
-  const [userData, setUserData] = useState<User | null>(user);
+const AuthNavbar: React.FC<AuthNavbarProps> = ({ handleLogout }) => {
+  const [userData, setUserData] = useState<User | null>();
   const [profileImage, setProfileImage] = useState<string>();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
-    const storedUser = localStorage.getItem("user"); 
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser: UserData = JSON.parse(storedUser);
-      localStorage.setItem('profileImage', parsedUser.profileImage);
+      localStorage.setItem("profileImage", parsedUser.profileImage);
       // const profileImage = localStorage.getItem('profileImage');
       // console.log("parsedUser", parsedUser);
-      
+
       setUserData(JSON.parse(storedUser));
-      if(parsedUser.profileImage){
-        if(parsedUser.profileImage.includes("googleusercontent")){
+      if (parsedUser.profileImage) {
+        if (parsedUser.profileImage.includes("googleusercontent")) {
           setProfileImage(parsedUser.profileImage);
           // console.log("googleusercontent", profileImage);
-          
-        }
-        else {
+        } else {
           setProfileImage(URL + `/public/${parsedUser.profileImage}`);
           // console.log("profileImage", profileImage);
         }
@@ -53,7 +51,7 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
 
   const logout = async () => {
     const userData: UserData = JSON.parse(localStorage.getItem("user"));
-   await fetch("http://localhost:3000/auth/logout", {
+    await fetch("http://localhost:3000/auth/logout", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${userData.refreshToken}`,
@@ -69,67 +67,77 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
     navigate("/");
   };
 
-  
+  return (
+    <BootstrapNavbar
+      collapseOnSelect
+      expand="lg"
+      className="navbar navbar-expand navbar-light bg-dark"
+    >
+      <Container>
+        <div>
+          {" "}
+          <Link to="/" className="nav-link">
+            Social AD
+          </Link>
+        </div>
 
-      return (
-        <BootstrapNavbar collapseOnSelect expand="lg" className="navbar navbar-expand navbar-light bg-dark">
-          <Container>
-            <div> < Link to="/" className="nav-link">Social AD</Link></div>
-            
-            <BootstrapNavbar.Toggle aria-controls="responsive-navbar-nav" />
-            <BootstrapNavbar.Collapse id="responsive-navbar-nav">
-              {userData && (
-                <>
+        <BootstrapNavbar.Toggle aria-controls="responsive-navbar-nav" />
+        <BootstrapNavbar.Collapse id="responsive-navbar-nav">
+          {userData && (
+            <>
               <Nav className="me-auto">
-             
                 <Link to="/news" className="nav-link">
-                News
+                  News
                 </Link>
                 <Link to="/news" className="nav-link">
-                Posts
+                  Posts
                 </Link>
                 <Link to="/news" className="nav-link">
-                Comments
+                  Comments
                 </Link>
               </Nav>
               <Nav>
                 <div className="image-wrapper">
-                <img className="profile-image" alt="profile-pic"
-                src={profileImage}
-                />
+                  <img
+                    className="profile-image"
+                    alt="profile-pic"
+                    src={profileImage}
+                  />
                 </div>
-              <NavDropdown title="Profile User" className="link" id="collapsible-nav-dropdown">
+                <NavDropdown
+                  title="Profile User"
+                  className="link"
+                  id="collapsible-nav-dropdown"
+                >
                   <NavDropdown.Item as="div">
                     <Link to={`/UserPosts`} className="link">
-                      Posts                                 
-                    </Link>               
-                    </NavDropdown.Item>
+                      Posts
+                    </Link>
+                  </NavDropdown.Item>
                   <NavDropdown.Item as="div">
                     <Link to={`/UserComments`} className="link">
-                    Comments
+                      Comments
                     </Link>
-                    </NavDropdown.Item>
+                  </NavDropdown.Item>
                   <NavDropdown.Item as="div">
                     <Link to={`/profile`} className="link">
-                    Edit
+                      Edit
                     </Link>
-                    </NavDropdown.Item>
-              </NavDropdown>
+                  </NavDropdown.Item>
+                </NavDropdown>
                 <Nav className="nav-link" onClick={logout}>
-                  <Link to="/" className="link">Logout
+                  <Link to="/" className="link">
+                    Logout
                   </Link>
-                  </Nav>
-                <Nav className="nav-link">
-                 Settings
                 </Nav>
+                <Nav className="nav-link">Settings</Nav>
               </Nav>
-              </>
-              )}
-            </BootstrapNavbar.Collapse>
-          </Container>
-        </BootstrapNavbar>
-      );
-    
+            </>
+          )}
+        </BootstrapNavbar.Collapse>
+      </Container>
+    </BootstrapNavbar>
+  );
 };
 
 export default AuthNavbar;
