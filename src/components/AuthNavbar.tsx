@@ -13,7 +13,6 @@ interface User {
 interface AuthNavbarProps {
   user?: User | null;
   handleLogout: () => void;
-  profile;
 }
 
 export interface UserData {
@@ -30,29 +29,41 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    console.log("storedUser", storedUser);
-   
+    const storedUser = localStorage.getItem("user"); 
     if (storedUser) {
       const parsedUser: UserData = JSON.parse(storedUser);
+      localStorage.setItem('profileImage', parsedUser.profileImage);
+      // const profileImage = localStorage.getItem('profileImage');
+      // console.log("parsedUser", parsedUser);
+      
       setUserData(JSON.parse(storedUser));
-      if (parsedUser.profileImage) {
-        setProfileImage(URL + `/public/${parsedUser.profileImage}`);
+      if(parsedUser.profileImage){
+        if(parsedUser.profileImage.includes("googleusercontent")){
+          setProfileImage(parsedUser.profileImage);
+          // console.log("googleusercontent", profileImage);
+          
+        }
+        else {
+          setProfileImage(URL + `/public/${parsedUser.profileImage}`);
+          // console.log("profileImage", profileImage);
+        }
       }
     }
-  }, []);
+  }, [profileImage]);
 
   const logout = async () => {
     const userData: UserData = JSON.parse(localStorage.getItem("user"));
    await fetch("http://localhost:3000/auth/logout", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${userData.accessToken}`,
+        Authorization: `Bearer ${userData.refreshToken}`,
         "Content-Type": "application/json",
       },
     });
     localStorage.removeItem("user");
     localStorage.removeItem("tokens");
+    localStorage.removeItem("profileImage");
+    !profileImage && setProfileImage("");
     setUserData(null);
     handleLogout();
     navigate("/");
@@ -85,7 +96,6 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ user, handleLogout }) => {
                 <div className="image-wrapper">
                 <img className="profile-image" alt="profile-pic"
                 src={profileImage}
-              
                 />
                 </div>
               <NavDropdown title="Profile User" className="link" id="collapsible-nav-dropdown">

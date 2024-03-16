@@ -1,20 +1,14 @@
 import { toast } from "react-toastify";
 import React from "react";
-
-interface UserData {
-  _id: string;
-  accessToken: string;
-  refreshToken: string;
-  email: string;
-}
+import { UserData } from "../pages/Profile";
 
 export const editImage = async (
   user: UserData,
-  setShow: React.Dispatch<React.SetStateAction<boolean>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   selectedImage: File | null
-) => {
+): Promise<string | undefined> => {
   console.log("Edit Image");
+  console.log("user", user);
   const formData = new FormData();
   formData.append("file", selectedImage);
   const response = await fetch(
@@ -41,7 +35,6 @@ export const editImage = async (
     } else if (response.status === 500) {
       toast.error("Server error");
     }
-    setShow(true);
     setLoading(false);
     return;
   }
@@ -55,4 +48,6 @@ export const editImage = async (
       profileImage: data.profileImage,
     })
   );
+
+  return data.profileImage;
 };

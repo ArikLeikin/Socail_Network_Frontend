@@ -193,13 +193,9 @@ body {
   margin-bottom: 20px;
   cursor: pointer;
 }
-
-.google {
-  background-color: #df4930;
-}
-.facebook {
+/* .facebook {
   background-color: #507cc0;
-}
+} */
 .github {
   background-color: black;
 }

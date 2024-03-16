@@ -1,23 +1,16 @@
 import { toast } from "react-toastify";
 import React from "react";
-
-interface UserData {
-  _id: string;
-  accessToken: string;
-  refreshToken: string;
-  email: string;
-}
+import { UserData } from "../pages/Profile";
 
 export const editPassword = async (
   user: UserData,
-  setShow: React.Dispatch<React.SetStateAction<boolean>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   currentPassword: string,
   newPassword: string
-) => {
+): Promise<string | undefined> => {
   console.log("Edit Password");
-  console.log("newPassword", newPassword);
-
+  console.log("edit-password newPassword", newPassword);
+  console.log("edit-password currentPassword", currentPassword);
   const response = await fetch(
     `http://localhost:3000/user/password/${user._id}`,
     {
@@ -45,8 +38,11 @@ export const editPassword = async (
     } else if (response.status === 500) {
       toast.error("Server error");
     }
-    setShow(true);
     setLoading(false);
     return;
+  } else {
+    toast.success("Password updated successfully");
+    setLoading(false);
+    return newPassword;
   }
 };

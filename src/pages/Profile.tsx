@@ -1,28 +1,55 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { editPassword } from "../utils/edit-password";
 import { editImage } from "../utils/edit-image";
-interface UserData {
+export interface UserData {
   _id: string;
   accessToken: string;
   refreshToken: string;
   email: string;
+  profileImage: string;
+  password: string;
 }
 
 const Profile = () => {
   const user: UserData = JSON.parse(localStorage.getItem("user"));
   const [inputEmail, setInputEmail] = useState(user.email);
   const [currentPassword, setCurrentPassword] = useState("");
-const [newPassword, setNewPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [userGoogle, setUserGoogle] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const profileImageName = JSON.parse(
     localStorage.getItem("user")
   ).profileImage;
-  const [imagePreview, setImagePreview] = useState(
-   ` http://localhost:3000/public/${profileImageName}`
-  );
+  const [imagePreview, setImagePreview] = useState(`http://localhost:3000/public/${profileImageName}`);
   const [isEditing, setIsEditing] = useState(false);
-  const [,setShow] = useState(false);
+  // const [,setShow] = useState(false);
   const [,setLoading] = useState(false);
+
+    
+    useEffect(() => {
+      const storedUser = localStorage.getItem("user");
+        console.log("storedUser",storedUser);
+        
+      if (storedUser) {
+        const parsedUser: UserData = JSON.parse(storedUser);
+        localStorage.setItem('profileImage', parsedUser.profileImage);
+        if(parsedUser.password.length < 6){
+          setUserGoogle(true);
+        }     
+        setCurrentPassword(parsedUser.password);
+        
+        if(parsedUser.profileImage){
+          if(parsedUser.profileImage.includes("googleusercontent")){
+            setImagePreview(parsedUser.profileImage);
+          }
+          else {
+            setImagePreview(`http://localhost:3000/public/${parsedUser.profileImage}`);
+           
+          }
+        }
+      }
+    }, [profileImageName,currentPassword,user.password,user.profileImage]);
+
 
 
 
@@ -39,17 +66,41 @@ const [newPassword, setNewPassword] = useState("");
     // Validate email and password (omitted for brevity)
     setLoading(true);
     setIsEditing(true);
-    if (currentPassword.length >=6 && newPassword.length >= 6) {
-      await editPassword(user,setShow,setLoading,currentPassword,newPassword);
+    if (newPassword.length >=6) {
+        const newPasswordUser =   await editPassword(user,setLoading,currentPassword,newPassword);
+      if(newPasswordUser){
+        console.log("newPasswordUser",newPasswordUser);
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        storedUser.password = newPasswordUser;
+        localStorage.setItem("user", JSON.stringify(storedUser));
+          setCurrentPassword(newPasswordUser);
+          setNewPassword("");
+      }
+   
     }
+
     if (selectedImage) {
-      await editImage(user,setShow,setLoading,selectedImage);
+      const editedImage =  await editImage(user,setLoading,selectedImage);
+      if(editedImage){
+        console.log("editedImage",editedImage);
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        storedUser.profileImage = editedImage;
+        console.log("storedUser",storedUser);
+        
+        localStorage.setItem("user", JSON.stringify(storedUser));
+        setImagePreview(`http://localhost:3000/public/${editedImage}`);
+        window.location.reload();
+      }
     }
-    
     setLoading(false);
     setIsEditing(false); // Exit editing mode after successful submission
-    window.location.reload();
   };
+
+  // const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setCurrentPassword(event.target.value);
+    
+  // };
+
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -63,6 +114,8 @@ const [newPassword, setNewPassword] = useState("");
       reader.readAsDataURL(selectedFile);
     }
   };
+
+
 
   return (
     <div className="login">
@@ -81,28 +134,30 @@ const [newPassword, setNewPassword] = useState("");
             onChange={(e) => setInputEmail(e.target.value)}
             readOnly={true}
           />
-          <input
-            type={isEditing ? "text" : "password"}
-            placeholder="Password"
-            className="custom-input mb-3"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            readOnly={!isEditing}
-          />
-          {isEditing  && (
-          <input
-            type={isEditing ? "text" : "password"}
-            placeholder="New Password"
-            className="custom-input mb-3"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />)}
+    {!userGoogle && (
+  <>
+    <input
+      type={isEditing ? "text" : "password"}
+      placeholder="Password"
+      className="custom-input mb-3"
+      value={currentPassword}
+      readOnly={true}
+    />
+    {isEditing &&  (
+      <input
+        type={isEditing ? "text" : "password"}
+        placeholder="New Password"
+        className="custom-input mb-3"
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+      />
+    )}
+  </>
+)}
             
           <img
             src={
-              isEditing
-                ? imagePreview
-                : `http://localhost:3000/public/${profileImageName}`
+              imagePreview
             }
             alt="User Profile Image"
             style={{
@@ -113,7 +168,7 @@ const [newPassword, setNewPassword] = useState("");
               height: "auto",
             }}
           />
-          {isEditing && (
+          {(isEditing && newPassword == "") && (
             <>
               <label htmlFor="profile-image" className="btn btn-outline-dark">
                 Choose Profile Image
