@@ -62,26 +62,11 @@ const UserPosts = () => {
           (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
-        .map((post: PostData, index: number) => (
+        .map((post: PostData) => (
           <div className="UserPosts">
             <Post key={post._id} post={post} renderHome={renderHome} />
           </div>
 
-          // <Card key={index} style={{ width: '18rem', marginBottom: '1rem' }}>
-          //   <Card.Img variant="top" src={`http://localhost:3000/public/${post.picture}`} />
-          //   <Card.Body>
-          //     <Card.Title>{post.title}</Card.Title>
-          //     <Card.Text>{post.body}</Card.Text>
-          //   </Card.Body>
-          //   <ListGroup className="list-group-flush">
-          //     <ListGroup.Item>{post.likes} Likes</ListGroup.Item>
-          //     <ListGroup.Item>Posted on {post.createdAt.toLocaleString()}</ListGroup.Item>
-          //   </ListGroup>
-          //   <Card.Body>
-          //     <Card.Link href="#">View Post</Card.Link>
-          //     <Card.Link href="#">Edit Post</Card.Link>
-          //   </Card.Body>
-          // </Card>
         ))}
     </>
   );

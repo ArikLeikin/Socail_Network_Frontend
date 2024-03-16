@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
 import { Image as ImageIcon } from "react-bootstrap-icons";
 import "./addPost.css";
-import profileImg from "../../assets/profile.png"; // Replace with the correct path
+// import profileImg from "../../assets/profile.png"; // Replace with the correct path
 import { ToastContainer, toast } from "react-toastify";
 
 interface AddPostProps {
