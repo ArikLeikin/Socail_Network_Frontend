@@ -3,7 +3,11 @@ hr {
   width: 100%;
   margin: 0px;
 }
+.removeImageBtn{
+  cursor: pointer;
 
+  font-size: medium;
+}
 .counts {
   width: 100%;
 }
