@@ -11,6 +11,7 @@ import Comments from "../comments/Comment";
 import AddComment from "../comments/AddComment";
 import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
 import { Image as ImageIcon, Key } from "react-bootstrap-icons";
+import { Link } from "react-router-dom";
 
 const toastConfiguration = {
   autoClose: 750, // Adjust auto close duration to 0.75 seconds
@@ -251,8 +252,11 @@ const Post = ({ post, renderHome }) => {
         className="d-flex mt-1 mb-1 justify-content-evenly"
         style={{ width: "100%" }}
       >
+        <Link to={`/comments/${post._id}`}>
+          Comments: {post.comments.length}
+        </Link>
+
         <Likes post={post} key={1} />
-        <Comments post={post} key={2} />
         {!isEditable && user && user._id === post.user ? (
           <>
             <button
