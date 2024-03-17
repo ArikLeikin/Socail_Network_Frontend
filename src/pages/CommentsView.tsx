@@ -5,7 +5,8 @@ import { Card, ListGroup } from "react-bootstrap";
 import moment from "moment";
 import "./commentView.css";
 import EditCommentButtons from "../components/editComment/EditComment";
-
+import { ToastContainer, toast } from "react-toastify";
+const baseURL = "http://localhost:3000";
 interface Comment {
   _id: string;
   user: string;
@@ -46,7 +47,6 @@ const CommentsView = () => {
       );
       if (response.ok) {
         const comment: Comment = await response.json();
-        console.log(comment);
         return comment;
       } else {
         console.error("Failed to fetch comment with ID:", commentId);
@@ -68,7 +68,6 @@ const CommentsView = () => {
       });
       if (response.ok) {
         const postData: PostData = await response.json();
-        console.log("Post Data:", postData);
         setPost(postData); // Update post state
 
         const commentData = await Promise.all(
@@ -83,6 +82,34 @@ const CommentsView = () => {
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
+    }
+  };
+
+  const editComment = async (commentId: string) => {
+    // Add logic to edit the comment
+
+    console.log("Editing comment with ID:", commentId);
+    forceUpdate();
+  };
+
+  const deleteComment = async (commentId: string) => {
+    // Add logic to delete the comment
+    try {
+      const response = await fetch(
+        `${baseURL}/posts/comments/${commentId}/deleteComment/${postId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        }
+      );
+      if (response.ok) {
+        toast.success("Deleted Comment");
+        forceUpdate();
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -118,7 +145,12 @@ const CommentsView = () => {
                       )}
                     </div>
                     <div>
-                      {comment.user === user._id && <EditCommentButtons />}{" "}
+                      {comment.user === user._id && (
+                        <EditCommentButtons
+                          onEdit={() => editComment(comment._id)}
+                          onDelete={() => deleteComment(comment._id)}
+                        />
+                      )}{" "}
                       {/* Add conditional rendering */}
                     </div>
                   </div>
@@ -127,6 +159,7 @@ const CommentsView = () => {
             </Card>
           ))}
       </div>
+      <ToastContainer />
     </div>
   );
 };
