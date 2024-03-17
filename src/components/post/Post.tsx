@@ -252,7 +252,10 @@ const Post = ({ post, renderHome }) => {
         className="d-flex mt-1 mb-1 justify-content-evenly"
         style={{ width: "100%" }}
       >
-        <Link to={`/comments/${post._id}`}>
+        <Link
+          to={`/comments/${post._id}`}
+          className="link-opacity-75 link-opacity-100-hover link-underline-light"
+        >
           Comments: {post.comments.length}
         </Link>
 
