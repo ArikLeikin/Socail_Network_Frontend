@@ -3,10 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import Post from "../components/post/Post";
 import { Card, ListGroup } from "react-bootstrap";
 import moment from "moment";
-import "./commentView.css";
 import EditCommentButtons from "../components/editComment/EditComment";
 import { ToastContainer, toast } from "react-toastify";
+import "./commentView.css";
 const baseURL = "http://localhost:3000";
+
 interface Comment {
   _id: string;
   user: string;
@@ -28,9 +29,13 @@ interface PostData {
 
 const CommentsView = () => {
   const [comments, setComments] = useState<Comment[]>([]);
-  const user = JSON.parse(localStorage.getItem("user")); // This should have a type but I'm leaving it as-is for now
+  const [editableCommentId, setEditableCommentId] = useState<string | null>(
+    null
+  ); // Track which comment is currently being edited
+  const [editedComment, setEditedComment] = useState<string>(""); // Track edited comment text
+  const user = JSON.parse(localStorage.getItem("user"));
   const { postId } = useParams<{ postId: string }>();
-  const [post, setPost] = useState<PostData | null>(null); // Initialize with null
+  const [post, setPost] = useState<PostData | null>(null);
   const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0);
   const navigate = useNavigate();
 
@@ -68,7 +73,7 @@ const CommentsView = () => {
       });
       if (response.ok) {
         const postData: PostData = await response.json();
-        setPost(postData); // Update post state
+        setPost(postData);
 
         const commentData = await Promise.all(
           postData.comments.map(getComment)
@@ -86,14 +91,33 @@ const CommentsView = () => {
   };
 
   const editComment = async (commentId: string) => {
-    // Add logic to edit the comment
-
-    console.log("Editing comment with ID:", commentId);
-    forceUpdate();
+    try {
+      const response = await fetch(
+        `${baseURL}/posts/comments/${commentId}/updateComment/${postId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+          body: JSON.stringify({ body: editedComment }), // Send the edited comment text in the request body
+        }
+      );
+      if (response.ok) {
+        toast.success("Comment edited successfully");
+        setEditableCommentId(null); // Reset editable comment ID
+        setEditedComment(""); // Clear edited comment text
+        forceUpdate();
+      } else {
+        toast.error("Failed to edit comment");
+      }
+    } catch (error) {
+      console.error("Error editing comment:", error);
+      toast.error("Failed to edit comment");
+    }
   };
 
   const deleteComment = async (commentId: string) => {
-    // Add logic to delete the comment
     try {
       const response = await fetch(
         `${baseURL}/posts/comments/${commentId}/deleteComment/${postId}`,
@@ -133,7 +157,16 @@ const CommentsView = () => {
           .map((comment, index) => (
             <Card className="my-2" key={index} style={{ width: "100%" }}>
               <Card.Body>
-                <Card.Text>{comment.body}</Card.Text>
+                {editableCommentId === comment._id ? (
+                  <input
+                    type="text"
+                    className="form-control mx-1"
+                    value={editedComment}
+                    onChange={(e) => setEditedComment(e.target.value)}
+                  />
+                ) : (
+                  <Card.Text>{comment.body}</Card.Text>
+                )}
               </Card.Body>
               <ListGroup className="list-group-flush">
                 <ListGroup.Item>
@@ -145,13 +178,32 @@ const CommentsView = () => {
                       )}
                     </div>
                     <div>
-                      {comment.user === user._id && (
-                        <EditCommentButtons
-                          onEdit={() => editComment(comment._id)}
-                          onDelete={() => deleteComment(comment._id)}
-                        />
-                      )}{" "}
-                      {/* Add conditional rendering */}
+                      {comment.user === user._id ? (
+                        editableCommentId === comment._id ? (
+                          <>
+                            <button
+                              onClick={() => editComment(comment._id)}
+                              className="btn btn-primary mx-2"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => setEditableCommentId(null)}
+                              className="btn btn-secondary"
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <EditCommentButtons
+                            onEdit={() => {
+                              setEditedComment(comment.body); // Set initial value of editedComment
+                              setEditableCommentId(comment._id);
+                            }}
+                            onDelete={() => deleteComment(comment._id)}
+                          />
+                        )
+                      ) : null}
                     </div>
                   </div>
                 </ListGroup.Item>
