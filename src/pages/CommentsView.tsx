@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Post from "../components/post/Post";
 import { Card, ListGroup } from "react-bootstrap";
 import moment from "moment";
@@ -31,6 +31,7 @@ const CommentsView = () => {
   const { postId } = useParams<{ postId: string }>();
   const [post, setPost] = useState<PostData | null>(null); // Initialize with null
   const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0);
+  const navigate = useNavigate();
 
   const getComment = async (commentId: string) => {
     try {
@@ -78,6 +79,7 @@ const CommentsView = () => {
         );
       } else {
         console.error("Failed to fetch post data");
+        navigate("/home");
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
