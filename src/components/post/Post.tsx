@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./post.css";
-import profileImg from "../../assets/profile.png";
-import bg from "../../assets/background.png";
-import likeIcon from "../../assets/like-icon.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Likes from "../likes/Likes";
-import Comments from "../comments/Comment";
 import AddComment from "../comments/AddComment";
 import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
-import { Image as ImageIcon, Key } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
 const toastConfiguration = {
@@ -33,14 +28,9 @@ interface UserData {
   email: string;
 }
 
-type Props = {
-  renderHome: () => void;
-};
 
 const Post = ({ post, renderHome }) => {
-  let userEmail = null;
   const user = JSON.parse(localStorage.getItem("user"));
-  const [showComments, setShowComments] = useState(false);
   const [users, setUsers] = useState<{ [key: string]: UserData }>({});
   const [postComments, setPostComments] = useState<string[]>(post.comments);
   const [isEditable, setEditable] = useState(false);
@@ -97,9 +87,9 @@ const Post = ({ post, renderHome }) => {
 
   // Function to handle file input change
   const handleImageChange = async (event) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
     const file = event.target.files[0];
+    console.log("file", file);
+    
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
       setEditablePicture(file);
@@ -108,13 +98,9 @@ const Post = ({ post, renderHome }) => {
 
   useEffect(() => {
     fetchUserForPost(post.id, post.user);
-  }, [post.id, post.user, postComments,isEditable,editablePicture,selectedImage]);
+  }, [post.id, post.user,isEditable, postComments,editablePicture,selectedImage]);
 
-  const handleChange = (event) => {
-    setEditableBody(event.target.value);
-  };
-
-  const handleRemoveImage = async (post) => {
+  const handleRemoveImage = async () => {
     const postId = post._id;
     console.log("postId", postId);
     
@@ -130,8 +116,8 @@ const Post = ({ post, renderHome }) => {
     });
     if (response.ok) {
       setEditablePicture(null);
-      setEditable(false);
       setSelectedImage(null);
+      toast.success("Image removed", toastConfiguration);
       renderHome();
     } else {
       toast.error("Error removing image", toastConfiguration);
@@ -266,7 +252,7 @@ const Post = ({ post, renderHome }) => {
                 />
                 <div className="d-flex">
               
-                    <Button variant="danger" onClick={()=>handleRemoveImage(post)} className="removeImageBtn">
+                    <Button variant="danger" onClick={()=>handleRemoveImage()} className="removeImageBtn">
                       <span aria-hidden="true">X</span>
                      
                     </Button>
