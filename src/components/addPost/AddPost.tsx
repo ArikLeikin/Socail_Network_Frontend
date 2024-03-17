@@ -14,13 +14,13 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [inputKey, setInputKey] = useState(0);
-
+  const[selectedFile, setSelectedFile] = useState<File | null>(null);
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedImage = e.target.files?.[0];
 
     if (selectedImage) {
       setImage(selectedImage);
-
+      setSelectedFile(selectedImage);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);

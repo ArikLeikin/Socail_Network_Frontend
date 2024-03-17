@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./post.css";
-import profileImg from "../../assets/profile.png";
-import bg from "../../assets/background.png";
-import likeIcon from "../../assets/like-icon.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Likes from "../likes/Likes";
-import Comments from "../comments/Comment";
 import AddComment from "../comments/AddComment";
 import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
-import { Image as ImageIcon, Key } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 
 const toastConfiguration = {
@@ -33,21 +28,18 @@ interface UserData {
   email: string;
 }
 
-type Props = {
-  renderHome: () => void;
-};
 
 const Post = ({ post, renderHome }) => {
-  let userEmail = null;
   const user = JSON.parse(localStorage.getItem("user"));
-  const [showComments, setShowComments] = useState(false);
   const [users, setUsers] = useState<{ [key: string]: UserData }>({});
   const [postComments, setPostComments] = useState<string[]>(post.comments);
   const [isEditable, setEditable] = useState(false);
   // State variables to manage editable content
   const [editableBody, setEditableBody] = useState(post.body);
   const [editablePicture, setEditablePicture] = useState<File | null>(null); // Change to accept File objects
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+   
   const getFormattedDateTime = (dateString: string) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -85,29 +77,53 @@ const Post = ({ post, renderHome }) => {
   };
 
   // Function to handle editing the post
-  const handleEditPost = () => {
+  const handleEditPost = (post:PostData) => {
+    console.log("post", post);
+    setSelectedImage(post.picture);
+    console.log("editableImage", selectedImage);
+    
     setEditable(!isEditable);
   };
 
   // Function to handle file input change
   const handleImageChange = async (event) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
     const file = event.target.files[0];
+    console.log("file", file);
+    
     if (file) {
+      setSelectedImage(URL.createObjectURL(file));
       setEditablePicture(file);
     }
   };
 
   useEffect(() => {
     fetchUserForPost(post.id, post.user);
-  }, [post.id, post.user, postComments]);
+  }, [post.id, post.user,isEditable, postComments,editablePicture,selectedImage]);
 
-  const handleChange = (event) => {
-    setEditableBody(event.target.value);
-  };
-
-  const handleRemoveImage = () => {
+  const handleRemoveImage = async () => {
+    const postId = post._id;
+    console.log("postId", postId);
+    
+    const response = await fetch(`http://localhost:3000/posts/${postId}/update`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+      body: JSON.stringify({
+        picture: null,
+      }),
+    });
+    if (response.ok) {
+      setEditablePicture(null);
+      setSelectedImage(null);
+      toast.success("Image removed", toastConfiguration);
+      renderHome();
+    } else {
+      toast.error("Error removing image", toastConfiguration);
+    }
+    
+  
     setEditablePicture(null);
   };
 
@@ -216,16 +232,16 @@ const Post = ({ post, renderHome }) => {
                 value={editableBody}
                 onChange={(e) => setEditableBody(e.target.value)}
               />
-              {editablePicture && (
+              {selectedImage && (
                 <div className="position-relative">
                   <BootstrapImage
-                    src={URL.createObjectURL(editablePicture)} // Render the file object as URL
+                  src= {editablePicture ? URL.createObjectURL(editablePicture) : selectedImage ? `http://localhost:3000/public/${selectedImage}` : null}
                     alt="Selected Image"
                     className="mt-2 mb-2"
                     style={{ maxWidth: "100%", maxHeight: "50%" }}
                   />
                 </div>
-              )}
+            )}
               <div className="d-flex  align-items-center mt-2 my-2">
                 <Form.Control
                   className="mx-2"
@@ -235,11 +251,13 @@ const Post = ({ post, renderHome }) => {
                   id="formImage"
                 />
                 <div className="d-flex">
-                  {editablePicture && (
-                    <Button variant="danger" onClick={handleRemoveImage}>
-                      <span aria-hidden="true">&times;</span>
+              
+                    <Button variant="danger" onClick={()=>handleRemoveImage()} className="removeImageBtn">
+                      <span aria-hidden="true">X</span>
+                     
                     </Button>
-                  )}
+                 
+                 
                 </div>
               </div>
             </Form.Group>
@@ -265,7 +283,7 @@ const Post = ({ post, renderHome }) => {
             <button
               type="button"
               className="btn btn-light px-0 py-0"
-              onClick={handleEditPost}
+              onClick={()=>handleEditPost(post)}
             >
               Edit Post
             </button>
