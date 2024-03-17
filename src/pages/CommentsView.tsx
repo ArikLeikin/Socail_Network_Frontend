@@ -27,7 +27,7 @@ interface PostData {
 
 const CommentsView = () => {
   const [comments, setComments] = useState<Comment[]>([]);
-  const user = localStorage; // This should have a type but I'm leaving it as-is for now
+  const user = JSON.parse(localStorage.getItem("user")); // This should have a type but I'm leaving it as-is for now
   const { postId } = useParams<{ postId: string }>();
   const [post, setPost] = useState<PostData | null>(null); // Initialize with null
   const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0);
@@ -118,7 +118,8 @@ const CommentsView = () => {
                       )}
                     </div>
                     <div>
-                      <EditCommentButtons />
+                      {comment.user === user._id && <EditCommentButtons />}{" "}
+                      {/* Add conditional rendering */}
                     </div>
                   </div>
                 </ListGroup.Item>
