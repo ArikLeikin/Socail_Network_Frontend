@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./post.css";
 import profileImg from "../../assets/profile.png";
@@ -172,7 +171,7 @@ const Post = ({ post, renderHome }) => {
 
   return (
     <div
-      className="myWrapper post-container mt-5" 
+      className="myWrapper mt-5"
       key={post.id}
       style={{ overflowWrap: "break-word" }}
     >
@@ -187,27 +186,73 @@ const Post = ({ post, renderHome }) => {
         </div>
         <hr />
 
-        <div className="d-flex flex-column">
-          <p className="mt-2">{editableBody}</p>
-          {post.picture && (
-            <img
-              src={`http://localhost:3000/public/${post.picture}`}
-              alt=""
-              className="mb-2"
-              style={{ maxWidth: "100%", height: "400px" }}
-            />
-          )}
-        </div>
+        {!isEditable ? (
+          <div className="d-flex flex-column">
+            <p className="mt-2">{editableBody}</p>
+            {post.picture && (
+              <img
+                src={`http://localhost:3000/public/${post.picture}`}
+                alt=""
+                className="mb-2"
+                style={{ maxWidth: "100%", height: "400px" }}
+              />
+            )}
+          </div>
+        ) : (
+          <Form style={{ width: "100%" }}>
+            <hr />
+            <Form.Group
+              className="d-flex flex-column align-items-center mt-1 postBody"
+              style={{ width: "100%" }}
+            >
+              <Form.Control
+                key={"1"}
+                as="textarea"
+                rows={3}
+                className="p-0" // Added margin on top and bottom
+                style={{ width: "90%" }}
+                placeholder="Share your thoughts"
+                value={editableBody}
+                onChange={(e) => setEditableBody(e.target.value)}
+              />
+              {editablePicture && (
+                <div className="position-relative">
+                  <BootstrapImage
+                    src={URL.createObjectURL(editablePicture)} // Render the file object as URL
+                    alt="Selected Image"
+                    className="mt-2 mb-2"
+                    style={{ maxWidth: "100%", maxHeight: "50%" }}
+                  />
+                </div>
+              )}
+              <div className="d-flex  align-items-center mt-2 my-2">
+                <Form.Control
+                  className="mx-2"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  id="formImage"
+                />
+                <div className="d-flex">
+                  {editablePicture && (
+                    <Button variant="danger" onClick={handleRemoveImage}>
+                      <span aria-hidden="true">&times;</span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </Form.Group>
+            <ToastContainer />
+          </Form>
+        )}
       </div>
       <hr />
       <div
         className="d-flex mt-1 mb-1 justify-content-evenly"
         style={{ width: "100%" }}
       >
-        <Link to={`/comments/${post._id}`}>
-          Comments: {post.comments.length}
-        </Link>{" "}
         <Likes post={post} key={1} />
+        <Comments post={post} key={2} />
         {!isEditable && user && user._id === post.user ? (
           <>
             <button
