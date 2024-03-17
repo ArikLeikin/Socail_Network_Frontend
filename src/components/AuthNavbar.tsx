@@ -85,15 +85,9 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ handleLogout }) => {
         <BootstrapNavbar.Collapse id="responsive-navbar-nav">
           {userData && (
             <>
-              <Nav className="me-auto">
+              <Nav className="mx-1 me-auto">
                 <Link to="/news" className="nav-link">
                   News
-                </Link>
-                <Link to="/news" className="nav-link">
-                  Posts
-                </Link>
-                <Link to="/news" className="nav-link">
-                  Comments
                 </Link>
               </Nav>
               <Nav>
@@ -109,28 +103,21 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ handleLogout }) => {
                   className="link"
                   id="collapsible-nav-dropdown"
                 >
-                  <NavDropdown.Item as="div">
-                    <Link to={`/UserPosts`} className="link">
-                      Posts
-                    </Link>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as="div">
-                    <Link to={`/UserComments`} className="link">
-                      Comments
-                    </Link>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as="div">
-                    <Link to={`/profile`} className="link">
-                      Edit
-                    </Link>
-                  </NavDropdown.Item>
+                  <Link to={`/UserPosts`} className="link">
+                    <NavDropdown.Item as="div">Posts</NavDropdown.Item>
+                  </Link>
+                  <Link to={`/UserComments`} className="link">
+                    <NavDropdown.Item as="div">Comments</NavDropdown.Item>
+                  </Link>
+                  <Link to={`/profile`} className="link">
+                    <NavDropdown.Item as="div">Edit</NavDropdown.Item>
+                  </Link>
                 </NavDropdown>
                 <Nav className="nav-link" onClick={logout}>
                   <Link to="/" className="link">
                     Logout
                   </Link>
                 </Nav>
-                <Nav className="nav-link">Settings</Nav>
               </Nav>
             </>
           )}

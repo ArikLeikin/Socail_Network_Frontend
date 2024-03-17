@@ -37,14 +37,14 @@ const UserComments = () => {
     return <div>Loading...</div>;
   }
 
-  async function  handleCommentClick(postId: PostData): Promise<void> {
+  async function handleCommentClick(postId: PostData): Promise<void> {
     const response = await fetch(`http://localhost:3000/posts/${postId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     });
-    
+
     if (response.ok) {
       console.log("response", response);
       const postData = await response.json();
@@ -60,24 +60,35 @@ const UserComments = () => {
         <h1 id="user-comment-highlight">User Comments</h1>
       </div>
       <div className="comment-card-container">
-        {comments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((comment, index) => (
-          <Card key={index} 
-          style={{ width: "25rem", marginBottom: "1rem" }} 
-          onClick={() => handleCommentClick(comment.post)}>
-            <div>
-         
-            </div>
-            <Card.Body>
-              <Card.Text>{comment.body}</Card.Text>
-            </Card.Body>
-            <ListGroup className="list-group-flush">
-              <ListGroup.Item>Posted on {moment(comment.createdAt).format('MMM Do YYYY, HH:mm:ss')}</ListGroup.Item>
-            </ListGroup>
-          </Card>   
-        ))}
+        {comments
+          .sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+          .map((comment, index) => (
+            <a>
+              <Card
+                key={index}
+                style={{ width: "25rem", marginBottom: "1rem" }}
+                onClick={() => handleCommentClick(comment.post)}
+              >
+                <div></div>
+
+                <Card.Body>
+                  <Card.Text>{comment.body}</Card.Text>
+                </Card.Body>
+                <ListGroup className="list-group-flush">
+                  <ListGroup.Item>
+                    Posted on{" "}
+                    {moment(comment.createdAt).format("MMM Do YYYY, HH:mm:ss")}
+                  </ListGroup.Item>
+                </ListGroup>
+              </Card>
+            </a>
+          ))}
       </div>
     </>
   );
-}
+};
 
 export default UserComments;
