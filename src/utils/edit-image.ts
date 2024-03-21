@@ -1,18 +1,16 @@
 import { toast } from "react-toastify";
 import React from "react";
 import { UserData } from "../pages/Profile";
-
+import SERVER_URL from "../config"
 export const editImage = async (
   user: UserData,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   selectedImage: File | null
 ): Promise<string | undefined> => {
-  console.log("Edit Image");
-  console.log("user", user);
   const formData = new FormData();
   formData.append("file", selectedImage);
   const response = await fetch(
-    `http://localhost:3000/user/picture/${user._id}`,
+    `${SERVER_URL}/user/picture/${user._id}`,
     {
       method: "PUT",
       headers: {
@@ -21,7 +19,7 @@ export const editImage = async (
       body: formData,
     }
   );
-  console.log("-----------response---------", response);
+
 
   if (!response.ok) {
     if (response.status === 401) {
@@ -39,7 +37,6 @@ export const editImage = async (
     return;
   }
   const data = await response.json();
-  console.log("-----------data---------", data);
 
   localStorage.setItem(
     "user",

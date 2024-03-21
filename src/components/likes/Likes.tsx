@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {  toast } from "react-toastify";
-
+import { toast } from "react-toastify";
+import SERVER_URL from "../../config"
 const Likes = ({ post }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [likeCount, setLikeCount] = useState(post.likes.length); // Initialize like count
@@ -15,7 +15,7 @@ const Likes = ({ post }) => {
       const likeAction = isLiked ? "unlike" : "like"; // Determine the action based on isLiked state
       setIsLiked(post.likes.includes(user.email));
       const response = await fetch(
-        `http://localhost:3000/posts/${post._id}/like`,
+        `${SERVER_URL}/posts/${post._id}/like`,
         {
           method: isLiked ? "DELETE" : "POST", // Use DELETE for unlike and POST for like
           headers: {
@@ -35,11 +35,7 @@ const Likes = ({ post }) => {
         );
       }
     } catch (error) {
-      console
-        .error
-        // `Error ${likeAction === "like" ? "liking" : "unliking"} the post:`,
-        // error
-        ();
+      console.error();
     }
   };
 

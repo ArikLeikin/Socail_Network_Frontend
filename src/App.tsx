@@ -14,7 +14,7 @@ import { Navigate } from "react-router-dom";
 import UserPosts from "./pages/UserPosts";
 import UserComments from "./pages/UserComments";
 import CommentsView from "./pages/CommentsView";
-
+import SERVER_URL from "./config";
 interface User {
   _id: string;
   accessToken: string;
@@ -35,10 +35,6 @@ function App() {
     setIsLoggedIn(false);
   };
 
-  // const handleProfileChange = (newProfileData: User) => {
-  //   setProfile(newProfileData);
-  //   setIsLoggedIn(!!newProfileData); // Update isLoggedIn based on profile data
-  // };
 
   useEffect(() => {
     const validateAccessToken = async () => {
@@ -49,7 +45,7 @@ function App() {
         if (user) {
           // Make a request to the server to validate the access token
           // Replace the following line with your actual API endpoint for token validation
-          const response = await fetch(`/user/${user._id}`, {
+          const response = await fetch(`${SERVER_URL}/user/${user._id}`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",

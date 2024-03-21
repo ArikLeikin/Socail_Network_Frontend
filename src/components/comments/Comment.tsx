@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import SERVER_URL from "../../config"
 const Comment = ({ post }) => {
   const [showComments, setShowComments] = useState(false);
   const [commentsData, setCommentsData] = useState([]);
@@ -15,7 +15,7 @@ const Comment = ({ post }) => {
         const comments = [];
         for (const commentId of post.comments) {
           const response = await fetch(
-            `http://localhost:3000/posts/comments/${commentId}/getComment/${post._id}`
+            `${SERVER_URL}/posts/comments/${commentId}/getComment/${post._id}`
           );
           if (response.ok) {
             const commentData = await response.json();

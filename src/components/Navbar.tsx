@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {Container } from "react-bootstrap";
-import BootstrapNavbar  from "react-bootstrap/Navbar";
+import { Container } from "react-bootstrap";
+import BootstrapNavbar from "react-bootstrap/Navbar";
+import SERVER_URL from "../config"
 
 interface User {
   displayName: string;
@@ -26,7 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
   const logout = async () => {
     const tokens = JSON.parse(localStorage.getItem("tokens"));
-    await fetch("http://localhost:3000/auth/logout", {
+    await fetch(`${SERVER_URL}/auth/logout`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${tokens.accessToken}`,
@@ -66,13 +67,13 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
   return (
     <BootstrapNavbar bg="dark" data-bs-theme="dark">
-        <Container>
-          <BootstrapNavbar.Brand href="/">AD Social</BootstrapNavbar.Brand>
-         
-            {userData ? renderLoggedInLinks() : renderLoggedOutLink()}
-          
-        </Container>
-      </BootstrapNavbar>
+      <Container>
+        <BootstrapNavbar.Brand href="/">AD Social</BootstrapNavbar.Brand>
+
+        {userData ? renderLoggedInLinks() : renderLoggedOutLink()}
+
+      </Container>
+    </BootstrapNavbar>
   );
 };
 

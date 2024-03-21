@@ -3,6 +3,7 @@ import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
 import { Image as ImageIcon, Key } from "react-bootstrap-icons";
 import profileImg from "../../assets/profile.png"; // Replace with the correct path
 import { ToastContainer, toast } from "react-toastify";
+import SERVER_URL from "../../config"
 
 const PostEdit = ({ post }) => {
   const [body, setBody] = useState("");
@@ -30,7 +31,6 @@ const PostEdit = ({ post }) => {
     e.preventDefault();
 
     try {
-      console.log(body);
 
       // Check if required fields are filled
       if (!body) {
@@ -48,7 +48,7 @@ const PostEdit = ({ post }) => {
       const userId = JSON.parse(localStorage.getItem("user"))._id;
       formData.append("user", userId);
       // Make a POST request to your backend endpoint
-      const response = await fetch("http://localhost:3000/posts/addPost", {
+      const response = await fetch(`${SERVER_URL}/posts/addPost`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -67,7 +67,6 @@ const PostEdit = ({ post }) => {
         setImagePreview(null);
         setInputKey(`formImage-${post._id}-${Date.now()}`);
 
-        console.log(response);
 
         toast.success("Post created successfully!");
       } else {

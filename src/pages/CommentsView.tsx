@@ -6,7 +6,7 @@ import moment from "moment";
 import EditCommentButtons from "../components/editComment/EditComment";
 import { ToastContainer, toast } from "react-toastify";
 import "./commentView.css";
-const baseURL = "http://localhost:3000";
+import SERVER_URL from "../config"
 
 interface Comment {
   _id: string;
@@ -42,7 +42,7 @@ const CommentsView = () => {
   const getComment = async (commentId: string) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/posts/comments/${commentId}/getComment/${postId}`,
+        `${SERVER_URL}/posts/comments/${commentId}/getComment/${postId}`,
         {
           method: "GET",
           headers: {
@@ -65,7 +65,7 @@ const CommentsView = () => {
 
   const getComments = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/posts/${postId}`, {
+      const response = await fetch(`${SERVER_URL}/posts/${postId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
@@ -93,7 +93,7 @@ const CommentsView = () => {
   const editComment = async (commentId: string) => {
     try {
       const response = await fetch(
-        `${baseURL}/posts/comments/${commentId}/updateComment/${postId}`,
+        `${SERVER_URL}/posts/comments/${commentId}/updateComment/${postId}`,
         {
           method: "PUT",
           headers: {
@@ -120,7 +120,7 @@ const CommentsView = () => {
   const deleteComment = async (commentId: string) => {
     try {
       const response = await fetch(
-        `${baseURL}/posts/comments/${commentId}/deleteComment/${postId}`,
+        `${SERVER_URL}/posts/comments/${commentId}/deleteComment/${postId}`,
         {
           method: "DELETE",
           headers: {

@@ -15,9 +15,9 @@ function News() {
       setLoading(true);
       try {
         const resp = await axios.get(
-          "https://newsapi.org/v2/everything?q=technology&apiKey=b738ed2669c54125aae96fba7c1107d5&pageSize=50"
+          "https://api.spaceflightnewsapi.net/v4/articles/"
         );
-        const shuffledArticles = await shuffleArray(resp.data.articles);
+        const shuffledArticles = await shuffleArray(resp.data.results);
         setNewsData(shuffledArticles);
       } catch (error) {
         console.error("Error fetching news data:", error);
@@ -62,9 +62,9 @@ function News() {
                       href={newsItem.url}
                     >
                       <Card.Title className="my-3">{newsItem.title}</Card.Title>
-                      <Card.Img src={newsItem.urlToImage} />
+                      <Card.Img src={newsItem.image_url} />
                       <Card.Body>
-                        <Card.Text>{newsItem.description}</Card.Text>
+                        <Card.Text>{newsItem.summary}</Card.Text>
                       </Card.Body>
                     </a>
                   </Card>

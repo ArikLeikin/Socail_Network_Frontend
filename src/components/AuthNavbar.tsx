@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Nav, NavDropdown } from "react-bootstrap";
 import BootstrapNavbar from "react-bootstrap/Navbar";
-const URL = "http://localhost:3000";
+import SERVER_URL from "../config"
 
 interface User {
   email: string;
@@ -33,17 +33,12 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ handleLogout }) => {
     if (storedUser) {
       const parsedUser: UserData = JSON.parse(storedUser);
       localStorage.setItem("profileImage", parsedUser.profileImage);
-      // const profileImage = localStorage.getItem('profileImage');
-      // console.log("parsedUser", parsedUser);
-
       setUserData(JSON.parse(storedUser));
       if (parsedUser.profileImage) {
         if (parsedUser.profileImage.includes("googleusercontent")) {
           setProfileImage(parsedUser.profileImage);
-          // console.log("googleusercontent", profileImage);
         } else {
-          setProfileImage(URL + `/public/${parsedUser.profileImage}`);
-          // console.log("profileImage", profileImage);
+          setProfileImage(SERVER_URL + `/public/${parsedUser.profileImage}`);
         }
       }
     }
@@ -51,7 +46,7 @@ const AuthNavbar: React.FC<AuthNavbarProps> = ({ handleLogout }) => {
 
   const logout = async () => {
     const userData: UserData = JSON.parse(localStorage.getItem("user"));
-    await fetch("http://localhost:3000/auth/logout", {
+    await fetch(`${SERVER_URL}/auth/logout`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${userData.refreshToken}`,

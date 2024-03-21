@@ -7,6 +7,7 @@ import Likes from "../likes/Likes";
 import AddComment from "../comments/AddComment";
 import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import SERVER_URL from "../../config"
 
 const toastConfiguration = {
   autoClose: 750, // Adjust auto close duration to 0.75 seconds
@@ -39,7 +40,7 @@ const Post = ({ post, renderHome }) => {
   const [editablePicture, setEditablePicture] = useState<File | null>(null); // Change to accept File objects
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-   
+
   const getFormattedDateTime = (dateString: string) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -53,7 +54,7 @@ const Post = ({ post, renderHome }) => {
 
   const fetchUserForPost = async (postId: number, userId: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/user/${userId}`, {
+      const response = await fetch(`${SERVER_URL}/user/${userId}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
@@ -71,25 +72,23 @@ const Post = ({ post, renderHome }) => {
   };
 
   const handleCommentAdded = (comment) => {
-    console.log(comment);
+
     setPostComments([...postComments, comment]);
     renderHome();
   };
 
   // Function to handle editing the post
-  const handleEditPost = (post:PostData) => {
-    console.log("post", post);
+  const handleEditPost = (post: PostData) => {
+
     setSelectedImage(post.picture);
-    console.log("editableImage", selectedImage);
-    
     setEditable(!isEditable);
   };
 
   // Function to handle file input change
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
-    console.log("file", file);
-    
+
+
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
       setEditablePicture(file);
@@ -98,13 +97,12 @@ const Post = ({ post, renderHome }) => {
 
   useEffect(() => {
     fetchUserForPost(post.id, post.user);
-  }, [post.id, post.user,isEditable, postComments,editablePicture,selectedImage]);
+  }, [post.id, post.user, isEditable, postComments, editablePicture, selectedImage]);
 
   const handleRemoveImage = async () => {
     const postId = post._id;
-    console.log("postId", postId);
-    
-    const response = await fetch(`http://localhost:3000/posts/${postId}/update`, {
+
+    const response = await fetch(`${SERVER_URL}/posts/${postId}/update`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -122,8 +120,8 @@ const Post = ({ post, renderHome }) => {
     } else {
       toast.error("Error removing image", toastConfiguration);
     }
-    
-  
+
+
     setEditablePicture(null);
   };
 
@@ -140,7 +138,7 @@ const Post = ({ post, renderHome }) => {
 
       // Make a POST request to your backend endpoint
       const response = await fetch(
-        `http://localhost:3000/posts/${post._id}/update`,
+        `${SERVER_URL}/posts/${post._id}/update`,
         {
           method: "PUT",
           headers: {
@@ -168,7 +166,7 @@ const Post = ({ post, renderHome }) => {
       const postId = post._id;
       const accessToken = JSON.parse(localStorage.getItem("user")).accessToken;
 
-      const response = await fetch(`http://localhost:3000/posts/${postId}`, {
+      const response = await fetch(`${SERVER_URL}/posts/${postId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -208,7 +206,7 @@ const Post = ({ post, renderHome }) => {
             <p className="mt-2">{editableBody}</p>
             {post.picture && (
               <img
-                src={`http://localhost:3000/public/${post.picture}`}
+                src={`${SERVER_URL}/public/${post.picture}`}
                 alt=""
                 className="mb-2"
                 style={{ maxWidth: "100%", height: "400px" }}
@@ -235,13 +233,13 @@ const Post = ({ post, renderHome }) => {
               {selectedImage && (
                 <div className="position-relative">
                   <BootstrapImage
-                  src= {editablePicture ? URL.createObjectURL(editablePicture) : selectedImage ? `http://localhost:3000/public/${selectedImage}` : null}
+                    src={editablePicture ? URL.createObjectURL(editablePicture) : selectedImage ? `${SERVER_URL}/public/${selectedImage}` : null}
                     alt="Selected Image"
                     className="mt-2 mb-2"
                     style={{ maxWidth: "100%", maxHeight: "50%" }}
                   />
                 </div>
-            )}
+              )}
               <div className="d-flex  align-items-center mt-2 my-2">
                 <Form.Control
                   className="mx-2"
@@ -251,13 +249,13 @@ const Post = ({ post, renderHome }) => {
                   id="formImage"
                 />
                 <div className="d-flex">
-              
-                    <Button variant="danger" onClick={()=>handleRemoveImage()} className="removeImageBtn">
-                      <span aria-hidden="true">X</span>
-                     
-                    </Button>
-                 
-                 
+
+                  <Button variant="danger" onClick={() => handleRemoveImage()} className="removeImageBtn">
+                    <span aria-hidden="true">X</span>
+
+                  </Button>
+
+
                 </div>
               </div>
             </Form.Group>
@@ -283,7 +281,7 @@ const Post = ({ post, renderHome }) => {
             <button
               type="button"
               className="btn btn-light px-0 py-0"
-              onClick={()=>handleEditPost(post)}
+              onClick={() => handleEditPost(post)}
             >
               Edit Post
             </button>

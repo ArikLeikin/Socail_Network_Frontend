@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { Alert } from "react-bootstrap";
 import "./login.css";
-import BackgroundImage from "../assets/background.png";
 import Post from "../components/post/Post";
 import AddPost from "../components/addPost/AddPost";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import SERVER_URL from "../config"
 
 interface PostData {
   _id: number;
@@ -22,17 +21,6 @@ interface UserData {
   email: string;
 }
 
-const getFormattedDateTime = (dateString: string) => {
-  const date = new Date(dateString);
-  const options: Intl.DateTimeFormatOptions = {
-    hour: "numeric", // or "2-digit"
-    minute: "numeric", // or "2-digit"
-    hour12: false,
-  };
-  const formattedDate = date.toLocaleDateString(undefined, options);
-  return formattedDate;
-};
-
 const Home: React.FC = () => {
   const [posts, setPosts] = useState<PostData[]>([]);
   const [users, setUsers] = useState<{ [key: string]: UserData }>({});
@@ -42,7 +30,6 @@ const Home: React.FC = () => {
 
   const handleAddPost = async (newPost: PostData) => {
     try {
-      // await fetchUserForPost(newPost.id, newPost.user);
       newPost.likes = [];
       setPosts((prevPosts) => [newPost, ...prevPosts]);
       forceUpdate();
@@ -52,15 +39,13 @@ const Home: React.FC = () => {
   };
 
   const handleRender = () => {
-    console.log("Handle Render");
-
     forceUpdate();
   };
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch("http://localhost:3000/posts/allPosts", {
+        const response = await fetch(`${SERVER_URL}/posts/allPosts`, {
           method: "GET",
         });
 
@@ -69,9 +54,6 @@ const Home: React.FC = () => {
           const data: PostData[] = await response.json();
           setPosts(data.reverse());
 
-          // data.forEach((post) => {
-          //   fetchUserForPost(post.id, post.user);
-          // });
         } else {
           toast.error("Error fetching posts!");
         }

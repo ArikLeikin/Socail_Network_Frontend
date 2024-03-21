@@ -1,13 +1,13 @@
 import React, { useState, ChangeEvent } from "react";
-// import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import profileImg from "../assets/profile.png";
+import SERVER_URL from "../config"
 
 const Register = () => {
   const [inputEmail, setInputEmail] = useState("");
-   const [inputPassword, setInputPassword] = useState("");
+  const [inputPassword, setInputPassword] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(profileImg);
 
@@ -38,7 +38,7 @@ const Register = () => {
         password: inputPassword,
       };
 
-      const response = await fetch("http://localhost:3000/auth/register", {
+      const response = await fetch(`${SERVER_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,16 +47,16 @@ const Register = () => {
       });
 
       const responseData = await response.json();
-      console.log("responseData", responseData);
-      
+
+
       if (response.ok) {
         // Registration successful
         const pictureFormData = new FormData();
         pictureFormData.append("file", selectedImage);
         const userId = responseData._id;
-        if(selectedImage){
+        if (selectedImage) {
           const response = await fetch(
-            `http://localhost:3000/user/picture/${userId}`,
+            `${SERVER_URL}/user/picture/${userId}`,
             {
               method: "PUT",
               headers: {
@@ -66,13 +66,13 @@ const Register = () => {
             }
           );
 
-          if(response.ok){
+          if (response.ok) {
             console.log("Image uploaded successfully");
-                 
+
           }
         }
-          navigate("/");
-        
+        navigate("/");
+
       } else {
         // Handle registration failure
         if (response.status === 409) {
@@ -90,10 +90,7 @@ const Register = () => {
 
     setLoading(false);
   };
-  
-  // const handlePassword = () => {
-  //   // Handle password logic if needed
-  // };
+
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -119,9 +116,6 @@ const Register = () => {
     return password.length >= 6;
   };
 
-  // function delay(ms: number | undefined) {
-  //   return new Promise((resolve) => setTimeout(resolve, ms));
-  // }
 
   return (
     <div className="login">

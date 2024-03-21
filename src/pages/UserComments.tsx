@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, ListGroup } from "react-bootstrap";
+import SERVER_URL from "../config"
 
 import moment from "moment";
 import { PostData } from "../components/post/Post";
@@ -9,12 +10,12 @@ const UserComments = () => {
   const [comments, setComments] = useState([]);
   const [selectedPost, setSelectedPost] = useState<PostData>();
   const navigate = useNavigate();
-  console.log("id", id);
+
 
   useEffect(() => {
     const fetchComments = async () => {
       const response = await fetch(
-        `http://localhost:3000/userActivity/${id}/comments`,
+        `${SERVER_URL}/userActivity/${id}/comments`,
         {
           method: "GET",
           headers: {
@@ -22,7 +23,7 @@ const UserComments = () => {
           },
         }
       );
-      // console.log("response", response);
+
 
       if (response.ok) {
         const commentsData = await response.json();
@@ -38,7 +39,7 @@ const UserComments = () => {
   }
 
   async function handleCommentClick(postId: PostData): Promise<void> {
-    const response = await fetch(`http://localhost:3000/posts/${postId}`, {
+    const response = await fetch(`${SERVER_URL}/posts/${postId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -46,9 +47,9 @@ const UserComments = () => {
     });
 
     if (response.ok) {
-      console.log("response", response);
+
       const postData = await response.json();
-      console.log("postData", postData);
+
       setSelectedPost(postData);
       navigate(`/comments/${postId}`);
     }

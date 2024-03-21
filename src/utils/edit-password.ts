@@ -1,18 +1,15 @@
 import { toast } from "react-toastify";
 import React from "react";
 import { UserData } from "../pages/Profile";
-
+import SERVER_URL from "../config"
 export const editPassword = async (
   user: UserData,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   currentPassword: string,
   newPassword: string
 ): Promise<string | undefined> => {
-  console.log("Edit Password");
-  console.log("edit-password newPassword", newPassword);
-  console.log("edit-password currentPassword", currentPassword);
   const response = await fetch(
-    `http://localhost:3000/user/password/${user._id}`,
+    `${SERVER_URL}/user/password/${user._id}`,
     {
       method: "PUT",
       headers: {
@@ -25,8 +22,6 @@ export const editPassword = async (
       }),
     }
   );
-
-  console.log("-----------response---------", response);
 
   if (!response.ok) {
     if (response.status === 401) {

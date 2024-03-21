@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import SERVER_URL from "../../config"
 const AddComment = ({ post, onCommentAdded }) => {
   const [comment, setComment] = useState("");
 
@@ -20,7 +20,7 @@ const AddComment = ({ post, onCommentAdded }) => {
           body: comment,
         };
         const response = await fetch(
-          `http://localhost:3000/posts/comments/${post._id}/createComment`,
+          `${SERVER_URL}/posts/comments/${post._id}/createComment`,
           {
             method: "POST",
             headers: {

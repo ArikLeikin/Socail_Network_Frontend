@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import SERVER_URL from "../config"
 
 const PostComments = () => {
   const { postId } = useParams(); // Retrieve postId from URL parameters
@@ -9,7 +10,7 @@ const PostComments = () => {
     const fetchComments = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/posts/${postId}/comments`
+          `${SERVER_URL}/posts/${postId}/comments`
         );
         if (response.ok) {
           const commentsData = await response.json();

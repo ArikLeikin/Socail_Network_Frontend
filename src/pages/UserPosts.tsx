@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useState } from "react";
 import Post from "../components/post/Post";
-// import { Card } from 'react-bootstrap';
-// import ListGroup from 'react-bootstrap/ListGroup';
+import SERVER_URL from "../config"
+
 
 interface PostData {
   _id: number;
@@ -19,12 +19,11 @@ const UserPosts = () => {
   const [posts, setPosts] = useState([]);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  console.log("id", id);
 
   useEffect(() => {
     const fetchPosts = async () => {
       const response = await fetch(
-        `http://localhost:3000/userActivity/${id}/posts`,
+        `${SERVER_URL}/userActivity/${id}/posts`,
         {
           method: "GET",
           headers: {
@@ -32,11 +31,11 @@ const UserPosts = () => {
           },
         }
       );
-      console.log("response", response);
+
 
       if (response.ok) {
         const postsData = await response.json();
-        console.log("postsData", postsData);
+
         setPosts(postsData);
       }
     };

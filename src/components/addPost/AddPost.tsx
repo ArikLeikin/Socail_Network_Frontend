@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { Form, Button, Image as BootstrapImage } from "react-bootstrap";
 import { Image as ImageIcon } from "react-bootstrap-icons";
 import "./addPost.css";
-// import profileImg from "../../assets/profile.png"; // Replace with the correct path
 import { ToastContainer, toast } from "react-toastify";
-
+import SERVER_URL from "../../config"
 interface AddPostProps {
   onAddPost: (newPost: { _id: number; body: string; image?: File }) => void;
 }
@@ -14,7 +13,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [inputKey, setInputKey] = useState(0);
-  const[selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedImage = e.target.files?.[0];
 
@@ -36,7 +35,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
     e.preventDefault();
 
     try {
-      console.log(body);
+
 
       // Check if required fields are filled
       if (!body) {
@@ -54,7 +53,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
       const userId = JSON.parse(localStorage.getItem("user"))._id;
       formData.append("user", userId);
       // Make a POST request to your backend endpoint
-      const response = await fetch("http://localhost:3000/posts/addPost", {
+      const response = await fetch(`${SERVER_URL}/posts/addPost`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -72,7 +71,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
         setImage(null);
         setImagePreview(null);
         setInputKey((prevKey) => prevKey + 1);
-        console.log(response);
+
 
         toast.success("Post created successfully!");
       } else {
@@ -122,7 +121,7 @@ const AddPost: React.FC<AddPostProps> = ({ onAddPost }) => {
         <div className="d-flex flex-column align-items-center mt-2">
           <div className="d-flex mt-2">
             {" "}
-            {/* Added margin top */}
+
             <label htmlFor="formImage" className="btn btn-outline-dark mr-2">
               <ImageIcon /> Choose Image
             </label>
